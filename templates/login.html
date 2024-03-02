@@ -1,0 +1,29 @@
+<!-- Login Page! -->
+
+
+<!-- Yea, I'm aware how bad the mess below looks. It just lists all flashed messages from the server.
+The stuff in the curly brackets is basically code -->
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+{% block body %}{% endblock %}
+
+<!-- Ok, back to normal HTML stuff: -->
+
+<p>
+    This is the login page!
+    Login here!
+</p>
+
+<form action="" method="post">
+    <label>Username:</label>
+    <input type="text" name="username">
+    <input type="submit" value="submit">
+</form>

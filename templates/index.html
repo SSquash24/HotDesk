@@ -1,0 +1,15 @@
+<!-- Main Page! 
+        Inputs:
+            name:       username of the logged in user
+            booking:    office the user is booked in, or None if not booked
+-->
+
+
+<p>Hello, {{ name }}! Your booking is {{ booking }}</p>
+
+<a href="/book">Book a desk!</a>
+
+<!-- Logout button. Sends a POST request to /logout -->
+<form action="/logout" method="post">
+    <input type="submit" value="Log out">
+</form>

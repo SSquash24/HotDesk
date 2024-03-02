@@ -1,0 +1,31 @@
+<!-- Booking Page!
+        Inputs:
+            name:       username of the logged in user
+-->
+
+<!-- Yea, I'm aware how bad the mess below looks. It just lists all flashed messages from the server.
+The stuff in the curly brackets is basically code -->
+
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
+{% block body %}{% endblock %}
+
+<!-- Ok, back to normal html stuff: -->
+
+<p> This is the booking page! </p>
+
+<!-- Booking form. Will send a POST request to /book -->
+<form action="/book" method="post">
+    <label>Booking Date:</label>
+    <input type="date" name="date">
+    <input type="submit" value="submit">
+</form>
+
+<a href="/">Go back to main page</a>
