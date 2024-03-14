@@ -1,29 +1,21 @@
 <!-- Login Page! -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>HotDesk login</title>
+    <script src="/static/login.js"></script>
+  </head>
 
 
-<!-- Yea, I'm aware how bad the mess below looks. It just lists all flashed messages from the server.
-The stuff in the curly brackets is basically code -->
+  <body>
+    <p id="err msg" hidden="true" class="error">Incorrect details. Please try again!</p>
 
-{% with messages = get_flashed_messages() %}
-  {% if messages %}
-    <ul class=flashes>
-    {% for message in messages %}
-      <li>{{ message }}</li>
-    {% endfor %}
-    </ul>
-  {% endif %}
-{% endwith %}
-{% block body %}{% endblock %}
-
-<!-- Ok, back to normal HTML stuff: -->
-
-<p>
-    This is the login page!
-    Login here!
-</p>
-
-<form action="" method="post">
+    <p>
+      This is the login page!
+      Login here!
+    </p>
     <label>Username:</label>
-    <input type="text" name="username">
-    <input type="submit" value="submit">
-</form>
+    <input type="text" id="username">
+    <button onclick="login()">Submit</button>
+</body>
+</html>

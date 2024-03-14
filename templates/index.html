@@ -3,13 +3,15 @@
             name:       username of the logged in user
             booking:    office the user is booked in, or None if not booked
 -->
+<DOCTYPE HTML>
+<head>
+    <script src="/static/index.js"></script>
+</head>
+<body>
+    <p>Hello, {{ name }}! Your booking is {{ booking }}</p>
 
+    <a href="/book">Book a desk!</a>
 
-<p>Hello, {{ name }}! Your booking is {{ booking }}</p>
-
-<a href="/book">Book a desk!</a>
-
-<!-- Logout button. Sends a POST request to /logout -->
-<form action="/logout" method="post">
-    <input type="submit" value="Log out">
-</form>
+    <button onclick="logout()">Logout</button>
+</body>
+</DOCTYPE>
