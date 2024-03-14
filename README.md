@@ -8,6 +8,8 @@ Currently this code has no real database, just a basic login system and a way fo
 2. Install [Poetry](https://python-poetry.org/docs/) using the version of python you just installed (make sure `pipx` is installed with the correct version)
 3. Run `poetry install` in the root directory
 4. Run `poetry run uvicorn backend:app --reload` to start the app
+5. You should see that `Uvicorn running on http://127.0.0.1:8000`. 
+   Go to [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) to be able to send requests to the server directly from the browser.
 
 ## General Tips for Poetry
 
