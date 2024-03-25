@@ -1,0 +1,44 @@
+.Book {
+    /* text-align: center; */
+    align-content: center;
+    align-items: center;
+    width: 95%;
+    height: 90vh;
+    max-width: 1000px;
+    background-color: white;
+}
+
+.mainContents {
+    padding-top: 20px;
+
+    text-align: justify;
+}
+
+.mainContents::after {
+    display: inline-block;
+    width: 100%;
+}
+
+.bookCalendar {
+    padding-left: 5%;
+    padding-right: 5%;
+    display: inline-block;
+    /* margin-left: auto; */
+    width: 40%;
+    /* height: 50%; */
+    vertical-align: top;
+}
+
+.bookingForm {
+    min-width: 40%;
+    padding-left: 5%;
+    padding-right: 5%;
+    padding-top: 5%;
+    display: inline-block;
+    vertical-align: top;
+    text-align: center;
+}
+
+#bookButton {
+    width: 125px;
+}
