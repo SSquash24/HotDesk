@@ -11,3 +11,4 @@ Currently this will not communicate with the backend api, this is just a UI
 ## npm tricks
 
 1. Start the server (in development mode) with `npm start` in the frontend folder
+2. Run tests with `npm test` in the frontend folder
