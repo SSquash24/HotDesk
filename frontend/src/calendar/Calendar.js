@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import CalendarDays from './calendar-days';
-import './calendar.css'
+import CalendarDays from './Calendar-days';
+import './Calendar.css'
 
 export default class Calendar extends Component {
     constructor(props) {
@@ -56,7 +56,7 @@ export default class Calendar extends Component {
                     <div className='table-header'>
                         {
                             this.weekdays.map((weekday) => {
-                                return <div className='weekday'><p>{weekday}</p></div>
+                                return <div key={weekday} className='weekday'><p>{weekday}</p></div>
                             })
                         }
                     </div>

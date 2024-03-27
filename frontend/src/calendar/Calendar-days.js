@@ -37,11 +37,11 @@ function CalendarDays(props) {
 
 
     return (
-        <div className="table-content">
+        <div data-testid='table-content' className="table-content">
             {
                 currentDays.map((day) => {
                     return (
-                        <div className={'calendar-day' + (day.currentMonth ? " current" : "")
+                        <div key={day.date.toDateString()} className={'calendar-day' + (day.currentMonth ? " current" : "")
                         + (day.selected ? " selected" : "")}
                         onClick={() => props.changeCurrentDay(day)}>
                             <span className={"calendar-span" + (day.isToday ? " today" : "") + (day.isBooked ? " booked": "")}>
