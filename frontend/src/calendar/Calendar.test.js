@@ -1,21 +1,32 @@
 import { render, screen } from '@testing-library/react';
 import Calendar from './Calendar';
+import { TokenContext } from '../Navigator/Navigator';
+import '../config'
 
-test('renders without crashing', () => {
-  render(<Calendar />);
-});
+describe('Calendar', () => {
 
-test('tells you year', () => {
-  render(<Calendar />)
-  expect(screen.getByText(new Date().getFullYear())).toBeInTheDocument()
-})
+  beforeEach(() => {
+    const setToken = jest.fn();
+    render(
+    <TokenContext.Provider value={{token: "test", setToken: setToken}}>
+      <Calendar />;
+    </TokenContext.Provider>)
+    expect(setToken).toHaveBeenCalledTimes(0)
+  });
 
-test('tells you month', () => {
-  render(<Calendar />);
-  expect(screen.getByText(new Date().toLocaleString('default', { month: 'long' }))).toBeInTheDocument();
-})
+  test('renders without crashing', () => {
+  });
 
-test('tells you today', () => {
-  render(<Calendar />);
-  expect(screen.getByTestId('table-content').querySelector('.today')).toHaveTextContent(new Date().getDate());
+  test('tells you year', () => {
+    expect(screen.getByText(new Date().getFullYear())).toBeInTheDocument()
+  })
+
+  test('tells you month', () => {
+    expect(screen.getByText(new Date().toLocaleString('default', { month: 'long' }))).toBeInTheDocument();
+  })
+
+  test('tells you today', () => {
+    expect(screen.getByTestId('table-content').querySelector('.today')).toHaveTextContent(new Date().getDate());
+  })
+
 })

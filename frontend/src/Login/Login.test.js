@@ -1,6 +1,21 @@
 import { render } from '@testing-library/react';
 import Login from './Login';
+import { TokenContext } from '../Navigator/Navigator';
+import  '../config';
 
-test('renders without crashing', () => {
-  render(<Login />);
-});
+describe('LogoutPage', () => {
+
+  beforeEach(() => {
+    const setToken = jest.fn()
+    render(
+      <TokenContext.Provider value={{token: "test", setToken: setToken}}>
+        <Login />
+      </TokenContext.Provider>
+    )
+    expect(setToken).toHaveBeenCalledTimes(0)
+  })
+
+  test('renders without crashing', () => {
+  });
+
+})

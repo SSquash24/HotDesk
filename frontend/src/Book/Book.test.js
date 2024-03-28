@@ -1,11 +1,26 @@
 import { render, screen } from '@testing-library/react';
 import Book from './Book';
+import { TokenContext } from '../Navigator/Navigator';
+import  '../config';
 
-test('renders without crashing', () => {
-  render(<Book />);
-});
+describe('BookPage', () => {
 
-test('page has calendar', () => {
-  render(<Book />);
-  expect(screen.getByText(new Date().getFullYear())).toBeInTheDocument()
+  beforeEach(() => {
+    const setToken = jest.fn()
+    render(
+      <TokenContext.Provider value={{token: "test", setToken: setToken}}>
+        <Book />
+      </TokenContext.Provider>
+    )
+    expect(setToken).toHaveBeenCalledTimes(0)
+  })
+
+  test('renders without crashing', () => {
+
+  });
+
+  test('page has calendar', () => {
+    expect(screen.getByText(new Date().getFullYear())).toBeInTheDocument()
+  })
+
 })
