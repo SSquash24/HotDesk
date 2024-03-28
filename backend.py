@@ -7,6 +7,7 @@ from datetime import date, datetime, timedelta, timezone
 
 # 3rd party imports
 from fastapi import Depends, FastAPI, Request, HTTPException, status
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 
@@ -28,6 +29,21 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 
 app = FastAPI()
+
+
+origins = [
+    "http://localhost:3000",
+    "localhost:3000"
+]
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
