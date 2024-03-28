@@ -3,7 +3,7 @@
 from datetime import date
 from typing import Optional
 
-from pydantic import BaseModel, FutureDate
+from pydantic import BaseModel, Field, FutureDate
 
 
 
@@ -21,7 +21,7 @@ class UserCreate(UserBase):
     pass
 
 class BookingBase(BaseModel):
-    seat: Optional[str]
+    seat: Optional[str] = Field("", description="Seat name")
     date: date
 
 class Booking(BookingBase):
