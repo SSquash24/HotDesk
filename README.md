@@ -1,6 +1,8 @@
-# Hot Desking Test
+# Hot Desking Backend
 
-Currently this code has no real database, just a basic login system and a way for a user to request a desk for a day and see their booking for today.
+Currently contains a login mechanism, and some boilerplate in preparation for the DB implementation. 
+
+Mostly adapted from the [FastAPI SQL](https://fastapi.tiangolo.com/tutorial/sql-databases/) and [Security](https://fastapi.tiangolo.com/tutorial/security/oauth2-jwt/) tutorials.
 
 ## Setup
 
@@ -9,6 +11,8 @@ Currently this code has no real database, just a basic login system and a way fo
 3. Run `poetry install` in the root directory
 4. Run `poetry shell` to activate the virtual environment
 5. Run `uvicorn backend:app --reload` in the virtual environment to start the app
+6. You should see that `Uvicorn running on http://127.0.0.1:8000`. Go to [](http://127.0.0.1:8000/docs) to be able to send requests to the server directly from the browser.
+7. You can simulate logging in by clicking the green "Authorize" button at the top right. Note that the password needs to be non-empty (although we are not validating it for now)
 
 ## General Tips for Poetry
 

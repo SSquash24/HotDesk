@@ -1,109 +1,119 @@
 # Backend API with FastAPI 
 # (I removed all the frontend endpoints with API "equivalents" for demonstration)
 
+# standard library imports
+from typing import Annotated
+from datetime import date, datetime, timedelta, timezone
 
-from fastapi import FastAPI, Request, HTTPException
-from starlette.applications import Starlette
-from starlette.middleware import Middleware
-from starlette.middleware.sessions import SessionMiddleware
-from starlette.templating import Jinja2Templates
-from starlette.responses import RedirectResponse
-from starlette.routing import Mount
-from starlette.staticfiles import StaticFiles
+# 3rd party imports
+from fastapi import Depends, FastAPI, Request, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from jose import JWTError, jwt
 
-from userDB import users_getUID, users_isValidUID, users_getUsername
-from officeDB import office_getBooking, office_tryBook
+# local imports
+import crud
+from models import Booking, BookingCreate, User, Token, TokenData
+from dummy import dummy_db
 
-from datetime import date, datetime
 
 # secret key used for encoding session data
-secret_key = b'QMBaG%&0w;JGJa1*8[Qm_2BpGCW'
-
-middleware = [
-    Middleware(SessionMiddleware, secret_key=secret_key, https_only=True)
-]
-
-routes = [
-    Mount('/static', app=StaticFiles(directory='static'), name="static"),
-]
-
-app = FastAPI(middleware=middleware, routes=routes)
+# should be in some .env file in production, not committed
+# but this works for now
+# to get a string like this run:
+# openssl rand -hex 32
+SECRET_KEY = "6d7b5968fccbc2b4d484280030d9424536091a64a9bd7c167e91ea18aaa98312"
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
 
 
-def logout(session, forcedLogout = False):
-    session.clear()
-    if not forcedLogout:
-        return "Successfully logged out!"
-    return ""
+app = FastAPI()
 
-# PAGE URLS (get requests) ----------------------------------------------------------------
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
-templates = Jinja2Templates(directory="templates")
+def get_db():
+    return dummy_db
+
+def create_access_token(data: dict, expires_delta: timedelta | None = None):
+    to_encode = data.copy()
+    if expires_delta:
+        expire = datetime.now(timezone.utc) + expires_delta
+    else:
+        expire = datetime.now(timezone.utc) + timedelta(minutes=15)
+    to_encode.update({"exp": expire})
+    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+    return encoded_jwt
+
+def authenticate_user(db, username: str, password: str):
+    user = crud.get_user_by_username(db, username)
+    if not user:
+        return False
+    # no passwords for now
+    # if not verify_password(password, user.hashed_password):
+    #     return False
+    return user
+
+async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db = Depends(get_db)):
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        uid: str = payload.get("sub")
+        if uid is None:
+            raise credentials_exception
+        token_data = TokenData(uid=int(uid))
+    except JWTError:
+        raise credentials_exception
+    user = crud.get_user(db, token_data.uid)
+    if user is None:
+        raise credentials_exception
+    return user
 
 
-@app.get("/")
-async def root(req: Request):
+# GET REQUESTS  -----------------------------------------------------------
 
-    #validate login details. If invalid logout (will send to login page)
-    uid = None
-    if 'uid' in req.session:
-        uid = req.session['uid']
-    
-    if not users_isValidUID(uid):
-        logout(req.session, forcedLogout=True)
-        return RedirectResponse("/login")
-    
 
-    return templates.TemplateResponse(request=req, name="index.html", context={"booking": office_getBooking(uid), "name": users_getUsername(uid)})
+@app.get("/users/me", response_model=User)
+async def read_current_user(user: Annotated[User, Depends(get_current_user)]):
+    return user
 
-@app.get("/login")
-async def loginPage(req: Request):
-    if 'uid' in req.session:
-        return RedirectResponse("/")
-    return templates.TemplateResponse(request=req, name="login.html", context={})
-    
-@app.get("/book")
-async def bookPage(req: Request):
+@app.get("/bookings/me", response_model=list[Booking])
+async def read_current_bookings(user: Annotated[User, Depends(get_current_user)], db = Depends(get_db)):
+    return crud.get_bookings_by_user(db, user.id)
 
-    #validate login details. If invalid logout (will send to login page)
-    uid = None
-    if 'uid' in req.session:
-        uid = req.session['uid']
-    
-    if not users_isValidUID(uid):
-        logout(req.session, forcedLogout=True)
-        return RedirectResponse("/login")
-
-    return templates.TemplateResponse(request=req, name="booking.html", context={"name": users_getUsername(uid)})
-
+@app.get("/bookings/date", response_model=list[Booking], dependencies=[Depends(oauth2_scheme)])
+async def read_bookings_on_date(date: date, db = Depends(get_db)):
+    return crud.get_bookings_on_date(db, date)
 
 # POST REQUESTS -----------------------------------------------------------
 
 
 
 @app.post("/login")
-def login(username: str, req: Request):
-    uid = users_getUID([username])
-    if uid == -1:
-        raise HTTPException(status_code=404, detail="Invalid login credentials. Please try again!")
-    req.session['uid'] = uid
-    return 
+async def login_for_access_token(
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
+    db = Depends(get_db)
+) -> Token:
+    user = authenticate_user(db, form_data.username, form_data.password)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": str(user.id)}, expires_delta=access_token_expires
+    )
+    return Token(access_token=access_token, token_type="bearer")
 
 
-@app.post("/logout")
-def logout_endpoint(req: Request):
-    return logout(req.session)
 
-@app.post("/book")
-def book(req: Request, booking_date: date):
 
-    #get UID
-    uid = None
-    if 'uid' in req.session:
-        uid = req.session['uid']
-
-    error = office_tryBook(uid, booking_date)
-    if error:
-        raise HTTPException(status_code=400, detail=f"Error: {error}")
-    return f"Successfully booked for {booking_date}"
+@app.post("/bookings/book", response_model=Booking)
+async def book(booking: BookingCreate, user: Annotated[User, Depends(get_current_user)], db = Depends(get_db)):
+    booking = crud.create_booking(db, booking, user.id)
+    return booking
