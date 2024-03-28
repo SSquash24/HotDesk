@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import Calendar from '../calendar/Calendar';
-import './Profile.css';
 
 
 const user = {

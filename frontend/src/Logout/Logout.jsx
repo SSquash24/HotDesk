@@ -1,10 +1,13 @@
+import { useContext } from 'react';
+import { TokenContext } from '../Navigator/Navigator';
 import './logout.css'
 
 function Logout() {
 
-    function handleClick() {
-        alert('Logging out...')
+    const { setToken } = useContext(TokenContext);
 
+    function handleClick() {
+        setToken(null)
     }
 
     return (
