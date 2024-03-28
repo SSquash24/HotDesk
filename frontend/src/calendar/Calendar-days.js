@@ -1,12 +1,13 @@
 function CalendarDays(props) {
+
     let firstDayOfMonth = new Date(props.day.getFullYear(), props.day.getMonth(), 1);
     let weekdayOfFirstDay = firstDayOfMonth.getDay();
     let currentDays = [];
     let today = new Date();
 
-    let bookedDays = // do fetch req here
-    [new Date('2024-03-25'), new Date('2024-03-31')]
 
+
+    let bookedDays = [...props.booked]
 
     for (let day = 0; day < 42; day++) {
         if (day === 0 && weekdayOfFirstDay === 0) {

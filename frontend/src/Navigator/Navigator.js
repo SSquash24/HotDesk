@@ -52,6 +52,7 @@ function Navigator() {
                 changeState({
                     uInfo: await response.json(),
                     validated: true,
+                    token: state.token,
                     attemptValidation: false,
                 })
             }
@@ -59,6 +60,7 @@ function Navigator() {
                 changeState({
                     uInfo: null,
                     validated: false,
+                    token: state.token,
                     attemptValidation: false
                 })
             }
@@ -76,7 +78,6 @@ function Navigator() {
 
 
     useEffect(() => {
-        console.log(state)
         if (state.attemptValidation) authorize() //attempt to authorize, if successfull a refresh will occur
     })
 

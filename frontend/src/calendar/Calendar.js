@@ -1,68 +1,88 @@
-import React, { Component } from 'react';
 import CalendarDays from './Calendar-days';
 import './Calendar.css'
 
-export default class Calendar extends Component {
-    constructor(props) {
-        super()
+import { TokenContext } from "../Navigator/Navigator";
+import { useState, useContext, useEffect } from 'react';
 
-        this.weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-        this.months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+function Calendar(props) {
 
-        this.state = {
-            currentDay: new Date(),
-            selectedDay: new Date()
+
+    const weekdays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+    const { token } = useContext(TokenContext)
+
+    const [currentDay, setCurrentDay] = useState(new Date())
+    const [selectedDay, setSelectedDay] = useState(new Date())
+    const [booked, setBooked] = useState({
+        value: [],
+        fetch: true
+    })
+    const handleClick = props.onClick
+
+    useEffect(() => {
+        if (booked.fetch) {
+            fetch(global.config.api_path + 'bookings/me', {
+                headers: {
+                    'Authorization': token
+                }
+            }).then((response) => {
+                return response.json().then((json) => {
+                    setBooked({
+                        value: json.map((elem) => new Date(elem.date)),
+                        fetch: false
+                    })
+                })
+            })
         }
-        this.handleClick = props.onClick
+    })
+
+
+    const changeCurrentDay = (day) => {
+        setCurrentDay(new Date(day.year, day.month, 1))
+        setSelectedDay(new Date(day.year, day.month, day.number))
+        handleClick(new Date(day.year, day.month, day.number));
     }
 
-    changeCurrentDay = (day) => {
-        this.setState({ currentDay: new Date(day.year, day.month, 1), selectedDay: new Date(day.year, day.month, day.number) });
-        this.handleClick(new Date(day.year, day.month, day.number));
-    }
-
-    lastMonth = ()  => {
-        let newDate = null;
-        if (this.state.currentDay.getMonth() === 0) {
-            newDate = new Date(this.state.currentDay.getFullYear() - 1, 11, 31)
+    const lastMonth = ()  => {
+        if (currentDay.getMonth() === 0) {
+            setCurrentDay(new Date(currentDay.getFullYear() - 1, 11, 31))
         } else {
-            newDate = new Date(this.state.currentDay.getFullYear(), this.state.currentDay.getMonth(), 0)
+            setCurrentDay(new Date(currentDay.getFullYear(), currentDay.getMonth(), 0))
         }
-        this.setState({ currentDay: newDate})
     }
 
-    nextMonth = () => {
-        let newDate = null;
-        if (this.state.currentDay.getMonth() === 11) {
-            newDate = new Date(this.state.currentDay.getFullYear() + 1, 0, 1)
+    const nextMonth = () => {
+        if (currentDay.getMonth() === 11) {
+            setCurrentDay(new Date(currentDay.getFullYear() + 1, 0, 1))
         } else {
-            newDate = new Date(this.state.currentDay.getFullYear(), this.state.currentDay.getMonth() + 1, 1)
+            setCurrentDay(new Date(currentDay.getFullYear(), currentDay.getMonth() + 1, 1))
         }
-        this.setState({ currentDay: newDate})
     }
 
-    render() {
-        return (
-            <div className='calendar'>
-                <div className='calendar-header'>
-                    <div className='header-arrows'>
-                        <button onClick={this.lastMonth}>&lt;</button>
-                        <button onClick={this.nextMonth}>&gt;</button>
-                    </div>
-                    <h3>{this.months[this.state.currentDay.getMonth()]}</h3>
-                    <h3>{this.state.currentDay.getFullYear()}</h3>
+    return (
+        <div className='calendar'>
+            <div className='calendar-header'>
+                <div className='header-arrows'>
+                    <button onClick={lastMonth}>&lt;</button>
+                    <button onClick={nextMonth}>&gt;</button>
                 </div>
-                <div className='calendar-body'>
-                    <div className='table-header'>
-                        {
-                            this.weekdays.map((weekday) => {
-                                return <div key={weekday} className='weekday'><p>{weekday}</p></div>
-                            })
-                        }
-                    </div>
-                    <CalendarDays selected={this.state.selectedDay} day={this.state.currentDay} changeCurrentDay={this.changeCurrentDay} />
-                </div>
+                <h3>{months[currentDay.getMonth()]}</h3>
+                <h3>{currentDay.getFullYear()}</h3>
             </div>
-        )
-    }
+            <div className='calendar-body'>
+                <div className='table-header'>
+                    {
+                        weekdays.map((weekday) => {
+                            return <div key={weekday} className='weekday'><p>{weekday}</p></div>
+                        })
+                    }
+                </div>
+                <CalendarDays selected={selectedDay} day={currentDay} changeCurrentDay={changeCurrentDay} booked={booked.value} />
+            </div>
+        </div>
+    )
 }
+
+
+export default Calendar

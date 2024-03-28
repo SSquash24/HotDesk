@@ -2,14 +2,6 @@ import { useState } from 'react';
 import Calendar from '../calendar/Calendar';
 
 
-// const user = {
-//   username: "John Doe",
-//   team: "XYZ",
-//   seat: "A1"
-
-// }
-
-
 function UserInfo(props) {
 
 
