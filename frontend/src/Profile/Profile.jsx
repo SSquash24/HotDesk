@@ -2,24 +2,24 @@ import { useState } from 'react';
 import Calendar from '../calendar/Calendar';
 
 
-const user = {
-  username: "John Doe",
-  team: "XYZ",
-  seat: "A1"
+// const user = {
+//   username: "John Doe",
+//   team: "XYZ",
+//   seat: "A1"
 
-}
+// }
 
 
-function UserInfo() {
+function UserInfo(props) {
 
 
   return (
     <div className="UInfo">
       <p >
-        name: {user.username} <br/>
-        Team: {user.team}
+        name: {props.uInfo.username} <br/>
+        Team: {props.uInfo.department}
       </p>
-      <h3>Today's seat: {user.seat}</h3>
+      <h3>Today's seat: {props.uInfo.seat}</h3>
     </div>
   );
 }
@@ -43,12 +43,12 @@ function Bookings() {
   )
 }
 
-function App() {
+function App(props) {
   return (
     <div className="App">
       <h1>Profile</h1>
-      <UserInfo/>
-      <Bookings/>
+      <UserInfo uInfo={props.uInfo} />
+      <Bookings props />
     </div>
   );
 }

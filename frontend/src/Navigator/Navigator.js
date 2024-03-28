@@ -8,6 +8,7 @@ import './Navigator.css'
 import {
     createContext,
     useState,
+    useEffect
 } from 'react';
 
 import {
@@ -22,43 +23,74 @@ export const TokenContext = createContext(null)
 
 function Navigator() {
 
-    const [token, setToken] = useState(null)
-    const [uInfo, setUInfo] = useState(null)
+    const [state, changeState] = useState({
+        uInfo: null,
+        token: null,
+        validated: false,
+        attemptValidation: true
+    })
+
+
+    const setToken = (token) => {
+        changeState({
+            uInfo: null,
+            token: token,
+            validated: false,
+            attemptValidation: true
+        })
+    }
+
 
     const authorize = async () => {
         try {
             const response = await fetch(global.config.api_path + 'users/me', {
                 headers: {
-                    'Authorization': token
+                    'Authorization': state.token
                 }
             })
             if (response.ok) {
-                setUInfo(await response.json())
+                changeState({
+                    uInfo: await response.json(),
+                    validated: true,
+                    attemptValidation: false,
+                })
             }
             else {
-                setUInfo(null)
+                changeState({
+                    uInfo: null,
+                    validated: false,
+                    attemptValidation: false
+                })
             }
         } catch {
-            if (uInfo !== null)
-                setUInfo(null)
-            else {
-                alert("Failed to connect to server")
-            }
+            alert("Failed to connect to server")
+            if (state.validated)
+                changeState({
+                    uInfo: null,
+                    token: state.token,
+                    validated: false,
+                    attemptValidation: false
+                })
         }
     }
 
-    authorize() //attempt to authorize, if successfull a refresh will occur
 
+    useEffect(() => {
+        console.log(state)
+        if (state.attemptValidation) authorize() //attempt to authorize, if successfull a refresh will occur
+    })
+
+    
 
     let pages; //pages will exist or not based on whether user is validated
-    if (uInfo === null) {
+    if (!state.validated) {
         pages = <>
                 <Route path="/login" element={<Login />} />
                 <Route path='*' element={<Navigate to="/login" />}/>
             </>
     } else {
         pages = <>
-                <Route exact path="/" element={<Profile />} />
+                <Route exact path="/" element={<Profile uInfo={state.uInfo}/>} />
                 <Route exact path="/book" element={<Book />} />
                 <Route exact path="/logout" element={<Logout />} />
                 <Route path='*' element={<Navigate to="/" />}/>
@@ -68,14 +100,14 @@ function Navigator() {
     return (
         <Router>
 
-            {uInfo !== null && <nav className='navbar'>
+            {state.validated && <nav className='navbar'>
                 <NavLink to='/'>Profile</NavLink>
                 <NavLink to='/book'>Book</NavLink>
                 <NavLink to='/logout'>Logout</NavLink>
             </nav>}
 
             <div className='main'>
-                <TokenContext.Provider value={{ token: token, setToken: setToken }}>
+                <TokenContext.Provider value={{ token: state.token, setToken: setToken }}>
                     <Routes>
                         {pages}
                     </Routes>
