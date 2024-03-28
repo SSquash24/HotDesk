@@ -32,7 +32,7 @@ def get_booking(db, bid: int):
 
 def get_bookings_by_user(db, uid: int):
     bookings = db["bookings"]
-    return [b for b in bookings.values() if b.uid == uid]
+    return [b for b in bookings.values() if b.owner_id == uid]
 
 def get_bookings_on_date(db, d: date):
     bookings = db["bookings"]
