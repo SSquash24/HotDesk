@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { TokenContext } from "../Navigator/Navigator";
 import Calendar from "../calendar/Calendar";
 import './book.css'
 
@@ -8,6 +9,8 @@ function Book() {
 
     const [date, setDate] = useState(new Date());
     const [seats, setSeats] = useState(0)
+    const { token } = useContext(TokenContext)
+
 
     const handleCalendarClick = (day) => {
         setDate(day)
@@ -18,7 +21,27 @@ function Book() {
     };
 
     const handleBookClick = () => {
-        alert("Booking for " + date.toDateString())
+        // try {
+            fetch(global.config.api_path + "bookings/book", {
+                method: "POST",
+                headers: {
+                    'Authorization': token,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    "date": (date.toISOString().split('T')[0])
+                })
+            }).then(async (response) => {
+                if (response.ok) {
+                    alert("Successful Booking for " + date.toDateString())
+                } else {
+                    let json = await response.json()
+                    alert("Error booking: Server returned bad response: " + json.detail[0].msg)
+                }
+            })
+        // } catch {
+        //     alert("Error booking: Failed to connect to server")
+        // }
     }
 
     return (
