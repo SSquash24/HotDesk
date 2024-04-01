@@ -45,7 +45,7 @@ function Login(props) {
                 <input id="unameInput"></input>
                 <h3>Password:</h3>
                 <input id="pwInput"></input>
-                <button onClick={handleButton}>Login</button>
+                <button onClick={handleButton} data-testid="login-button">Login</button>
             </div>
         </div>
     );
