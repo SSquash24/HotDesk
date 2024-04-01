@@ -15,8 +15,22 @@ function Book() {
     const handleCalendarClick = (day) => {
         setDate(day)
         
-        let new_seats = 1 //TODO fetch value
-        setSeats(new_seats)
+        fetch(global.config.api_path + "bookings/count?date=" + day.toISOString().split('T')[0], {
+            method: "GET",
+            headers: {
+                "accept": "application/json",
+                "Authorization": token
+            }
+        }).then( async (response) => {
+            let json = await response.json()
+            if (response.ok) {
+                setSeats(json)
+            }
+            else {
+                setSeats(-1)
+            }
+
+        })
 
     };
 

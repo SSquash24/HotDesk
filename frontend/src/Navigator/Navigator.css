@@ -13,6 +13,11 @@
   gap:10%;
 }
 
+.sideBySide {
+  align-items: center;
+  display: inline-flex;
+}
+
 .bookingsContent {
   margin: 2%;
   text-align: justify;
