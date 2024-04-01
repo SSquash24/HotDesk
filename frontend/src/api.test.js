@@ -56,8 +56,6 @@ describe('LoginPage', () => {
 });
 
 
-//quite broken past this point !!
-
 
 describe('Navigator', () => {
     beforeEach(() => {
@@ -73,21 +71,24 @@ describe('Navigator', () => {
             expect(fetch).toHaveBeenCalledWith(global.config.api_path + 'users/me', {
                 method: 'GET',
                 headers: {
-                    "Content-type": "application/x-www-form-urlencoded",
-                    "accept": "application/json"
+                    // "Content-type": "application/x-www-form-urlencoded",
+                    "accept": "application/json",
+                    "Authorization": null
                 },
             });
         });
     });
+
+    //quite broken past this point !!
 
     test('redirects to /login if GET /users/me request is denied', async () => {
         const history = createMemoryHistory()
         fetch.mockReject(() => Promise.reject("API is down"));
 
         render(
-            <Router history={history}>
-                <Navigator />
-            </Router>
+            // <Router history={history}>
+                <Navigator history={history} />
+            // </Router>
         );
 
         await waitFor(() => {
@@ -100,9 +101,7 @@ describe('Navigator', () => {
         fetch.mockResponseOnce(JSON.stringify({ username: 'testUser' }));
     
         render(
-          <Router history={history}>
-            <Navigator />
-          </Router>
+          <Navigator history={history} />
         );
     
         await waitFor(() => {
@@ -112,7 +111,7 @@ describe('Navigator', () => {
     });
 
     test('sends GET request to bookings/me and shows current bookings when logged in', async () => {
-      const history = createMemoryHistory();
+      // const history = createMemoryHistory();
       const setToken = jest.fn();
       const mockResponse = [
         { date: '2022-12-01', seat: 'A1' },
@@ -123,9 +122,9 @@ describe('Navigator', () => {
     
       render(
         <TokenContext.Provider value={{token: "test", setToken: setToken}}>
-          <Router history={history}>
+          {/* <Router history={history}> */}
             <Calendar />
-          </Router>
+          {/* </Router> */}
         </TokenContext.Provider>
       );
     

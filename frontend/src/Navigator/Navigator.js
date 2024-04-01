@@ -21,7 +21,7 @@ import {
 
 export const TokenContext = createContext(null)
 
-function Navigator() {
+function Navigator(props) {
 
     const [state, changeState] = useState({
         uInfo: null,
@@ -44,8 +44,10 @@ function Navigator() {
     const authorize = async () => {
         try {
             const response = await fetch(global.config.api_path + 'users/me', {
+                method: "GET",
                 headers: {
-                    'Authorization': state.token
+                    'Authorization': state.token,
+                    "accept": "application/json"
                 }
             })
             if (response.ok) {
@@ -99,7 +101,7 @@ function Navigator() {
     }
 
     return (
-        <Router>
+        <Router props>
 
             {state.validated && <nav className='navbar'>
                 <NavLink to='/'>Profile</NavLink>
