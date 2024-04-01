@@ -104,6 +104,17 @@ async def read_current_bookings(user: Annotated[User, Depends(get_current_user)]
 async def read_bookings_on_date(date: date, db = Depends(get_db)):
     return crud.get_bookings_on_date(db, date)
 
+@app.get("/bookings/count", response_model=int, dependencies=[Depends(oauth2_scheme)])
+async def read_num_bookings_on_date(date: date, db = Depends(get_db)):
+    return crud.get_num_bookings_on_date(db, date)
+
+@app.get("/bookings/today", response_model=Booking)
+async def read_todays_booking(user: Annotated[User, Depends(get_current_user)], db = Depends(get_db)):
+    booking = crud.get_todays_booking(db, user.id)
+    if (not booking):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No booking today")
+    return booking
+
 # POST REQUESTS -----------------------------------------------------------
 
 

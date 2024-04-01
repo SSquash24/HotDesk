@@ -38,6 +38,15 @@ def get_bookings_on_date(db, d: date):
     bookings = db["bookings"]
     return [b for b in bookings.values() if b.date == d]
 
+def get_todays_booking(db, uid: int):
+    bookings = db["bookings"]
+    today = [b for b in bookings.values() if b.date == date.today() and b.owner_id == uid]
+    if (today):
+        return today[0]
+    return None
+
+def get_num_bookings_on_date(db, d: date):
+    return len(get_bookings_on_date(db, d))
 
 def create_booking(db, booking: BookingCreate, uid: int):
     bookings = db["bookings"]
@@ -45,27 +54,3 @@ def create_booking(db, booking: BookingCreate, uid: int):
     bookings[bid] = Booking(id=bid, owner_id=uid, **booking.model_dump())
     return bookings[bid]
     
-
-
-# # login_creds: list of [username]
-# #   verifies the login detail       s are correct, and return valid users UID
-# #   if it is incorrect returns UID -1
-# def users_getUID(login_creds):
-#     uid = users.get(login_creds[0])
-#     if uid == None:
-#         return -1
-#     return uid
-
-# def users_isValidUID(uid):
-#     return uid in users.values()
-
-# def users_getUsername(uid):
-#     return uidToUsername[uid]
-
-# def office_getBooking(uid):
-#     return bookings_today.get(uid)
-
-# def office_tryBook(uid, Day: date):
-#     if Day > date.today():
-#         return None
-#     return "Cannot book into the past!"
