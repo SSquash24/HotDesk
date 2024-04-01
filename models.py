@@ -7,6 +7,7 @@ from pydantic import BaseModel, Field, FutureDate
 
 
 
+# database models: 
 # base classes: contains common attributes
 # create classes: contains attributes input from user for creation of object
 
@@ -16,8 +17,10 @@ class UserBase(BaseModel):
 
 class User(UserBase):
     id: int
+    # hashed_password: str
 
 class UserCreate(UserBase):
+    # password: str
     pass
 
 class BookingBase(BaseModel):
@@ -31,6 +34,7 @@ class Booking(BookingBase):
 class BookingCreate(BookingBase):
     date: FutureDate
 
+# other models:
 class Token(BaseModel):
     access_token: str
     token_type: str
