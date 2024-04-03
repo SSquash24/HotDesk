@@ -8,34 +8,48 @@ import './book.css'
 function Book() {
 
     const [date, setDate] = useState(new Date());
-    const [seats, setSeats] = useState(0)
+    const [seats, setSeats] = useState('-')
+    const [doInit, setInit] = useState(true)
     const { token } = useContext(TokenContext)
 
 
+    function getVacancies(day) {
+        let date = new Date(day.year, day.month, day.number)
+        date.setDate(date.getDate() + 1)
+        if (day.isBooked || date <= new Date()) {
+            setSeats('-')
+        } else {
+            fetch(global.config.api_path + "bookings/vacancies?date="
+                    + String(day.year).padStart(4, '0')
+                    + '-' + String(day.month).padStart(2, '0')
+                    + '-' + String(day.number).padStart(2, '0')
+                , {
+                method: "GET",
+                headers: {
+                    "accept": "application/json",
+                    "Authorization": token
+                }
+            }).then( async (response) => {
+                let json = await response.json()
+                if (response.ok) {
+                    setSeats(json)
+                }
+                else {
+                    setSeats('ERR')
+                }
+
+            })
+        }
+    }
+
     const handleCalendarClick = (day) => {
-        setDate(day)
-        
-        fetch(global.config.api_path + "bookings/count?date=" + day.toISOString().split('T')[0], {
-            method: "GET",
-            headers: {
-                "accept": "application/json",
-                "Authorization": token
-            }
-        }).then( async (response) => {
-            let json = await response.json()
-            if (response.ok) {
-                setSeats(json)
-            }
-            else {
-                setSeats(-1)
-            }
-
-        })
-
+        if (doInit) setInit(false)
+        setDate(new Date(day.year, day.month, day.number))
+        getVacancies(day)
     };
 
     const handleBookClick = () => {
-        // try {
+        try {
             fetch(global.config.api_path + "bookings/book", {
                 method: "POST",
                 headers: {
@@ -53,20 +67,21 @@ function Book() {
                     alert("Error booking: Server returned bad response: " + json.detail[0].msg)
                 }
             })
-        // } catch {
-        //     alert("Error booking: Failed to connect to server")
-        // }
+        } catch {
+            alert("Error booking: Failed to connect to server")
+        }
     }
+
 
     return (
         <div className="Book">
             <h1>Booking Page</h1>
             <div className="mainContents">
-                <div className='bookCalendar'><Calendar onClick={handleCalendarClick} /></div>
+                <div className='bookCalendar'><Calendar onClick={handleCalendarClick} alertToday={doInit} /></div>
                 <div className="bookingForm">
                     <h2>Date: {date.toDateString()}</h2>
                     <h3>Seats available: {seats}</h3>
-                    <button id="bookButton" onClick={handleBookClick} disabled={seats === 0}>Book</button>
+                    <button id="bookButton" onClick={handleBookClick} disabled={typeof(seats) != 'number' || seats <= 0}>Book</button>
                 </div>
             </div>
         </div>

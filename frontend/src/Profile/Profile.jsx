@@ -56,7 +56,7 @@ function Bookings() {
   const [date, setDate] = useState(new Date())
 
   const handleCalendarClick = (day) => {
-    setDate(day)
+    setDate(new Date(day.year, day.month, day.number))
   } 
 
   return (

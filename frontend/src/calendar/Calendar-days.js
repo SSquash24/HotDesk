@@ -6,7 +6,6 @@ function CalendarDays(props) {
     let today = new Date();
 
 
-
     let bookedDays = [...props.booked]
 
     for (let day = 0; day < 42; day++) {
@@ -33,6 +32,8 @@ function CalendarDays(props) {
             bookedDays.shift()
         }
 
+        if (props.alertToday && calendarDay.isToday)
+            props.changeCurrentDay(calendarDay);
         currentDays.push(calendarDay);
     }
 

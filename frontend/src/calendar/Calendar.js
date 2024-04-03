@@ -41,7 +41,7 @@ function Calendar(props) {
     const changeCurrentDay = (day) => {
         setCurrentDay(new Date(day.year, day.month, 1))
         setSelectedDay(new Date(day.year, day.month, day.number))
-        handleClick(new Date(day.year, day.month, day.number));
+        handleClick(day);
     }
 
     const lastMonth = ()  => {
@@ -78,7 +78,7 @@ function Calendar(props) {
                         })
                     }
                 </div>
-                <CalendarDays selected={selectedDay} day={currentDay} changeCurrentDay={changeCurrentDay} booked={booked.value} />
+                <CalendarDays selected={selectedDay} day={currentDay} changeCurrentDay={changeCurrentDay} booked={booked.value} alertToday={props.alertToday && !(booked.fetch)} />
             </div>
         </div>
     )
