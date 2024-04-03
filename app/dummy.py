@@ -1,5 +1,5 @@
 from datetime import date
-from models import User, Booking, Seat
+from app.models import User, Booking, Seat
 
 dummy_users = {
     0: User(**{

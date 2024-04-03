@@ -1,5 +1,4 @@
 # Backend API with FastAPI 
-# (I removed all the frontend endpoints with API "equivalents" for demonstration)
 
 # standard library imports
 from typing import Annotated
@@ -12,9 +11,9 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 
 # local imports
-import crud
-from models import Booking, BookingCreate, Seat, User, Token, TokenData
-from dummy import dummy_db
+from app import crud
+from app.models import Booking, BookingCreate, Seat, User, Token, TokenData
+from app.dummy import dummy_db
 
 
 # secret key used for encoding session data

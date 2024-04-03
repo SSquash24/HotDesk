@@ -6,7 +6,7 @@
 from datetime import date
 
 
-from models import Booking, BookingCreate, UserCreate, User
+from app.models import Booking, BookingCreate, UserCreate, User
 
 
 def get_user(db, uid: int):
