@@ -24,7 +24,7 @@ class UserCreate(UserBase):
     pass
 
 class BookingBase(BaseModel):
-    seat: Optional[str] = Field("", description="Seat name")
+    seat_id: Optional[int] = Field(None, description="Seat ID")
     date: date
 
 class Booking(BookingBase):
@@ -33,6 +33,17 @@ class Booking(BookingBase):
 
 class BookingCreate(BookingBase):
     date: FutureDate
+
+class SeatBase(BaseModel):
+    name: str
+    x: float
+    y: float
+
+class Seat(SeatBase):
+    id: int
+
+class SeatCreate(SeatBase):
+    pass
 
 # other models:
 class Token(BaseModel):

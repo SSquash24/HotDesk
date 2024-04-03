@@ -26,6 +26,7 @@ def get_user_by_username(db, username: str):
             return user
     return None
 
+
 def get_booking(db, bid: int):
     bookings = db["bookings"]
     return bookings.get(bid)
@@ -54,3 +55,12 @@ def create_booking(db, booking: BookingCreate, uid: int):
     bookings[bid] = Booking(id=bid, owner_id=uid, **booking.model_dump())
     return bookings[bid]
     
+
+def get_seat(db, sid: int):
+    seats = db["seats"]
+    return seats.get(sid)
+
+def get_num_seats(db):
+    seats = db["seats"]
+    return len(seats)
+

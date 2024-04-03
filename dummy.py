@@ -1,5 +1,5 @@
 from datetime import date
-from models import User, Booking
+from models import User, Booking, Seat
 
 dummy_users = {
     0: User(**{
@@ -22,16 +22,31 @@ dummy_users = {
 dummy_bookings = {
     0: Booking(**{
         "id": 0,
-        "seat":"A7",
+        "seat_id": 0,
         "date": date.today(),
         "owner_id": 0
     }), 
     1: Booking(**{
         "id": 1,
-        "seat":"B4",
+        "seat_id": 1,
         "date": date.today(),
         "owner_id": 2
     })
 }
 
-dummy_db = {"users": dummy_users, "bookings": dummy_bookings}
+dummy_seats = {
+    0: Seat(
+        name = "A7",
+        x = 0.0,
+        y = 1.0,
+        id = 0,
+    ),
+    1: Seat(
+        name = "B4",
+        x = 1.0,
+        y = 0.0,
+        id = 1,
+    ),
+}
+
+dummy_db = {"users": dummy_users, "bookings": dummy_bookings, "seats": dummy_seats}

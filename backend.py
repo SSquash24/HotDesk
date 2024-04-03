@@ -6,14 +6,14 @@ from typing import Annotated
 from datetime import date, datetime, timedelta, timezone
 
 # 3rd party imports
-from fastapi import Depends, FastAPI, Request, HTTPException, status
+from fastapi import Depends, FastAPI, Path, Request, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 
 # local imports
 import crud
-from models import Booking, BookingCreate, User, Token, TokenData
+from models import Booking, BookingCreate, Seat, User, Token, TokenData
 from dummy import dummy_db
 
 
@@ -114,6 +114,15 @@ async def read_todays_booking(user: Annotated[User, Depends(get_current_user)], 
     if (not booking):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No booking today")
     return booking
+
+@app.get("/bookings/vacancies", response_model=int, dependencies=[Depends(oauth2_scheme)])
+async def read_num_vacancies_on_date(date: date, db = Depends(get_db)):
+    return crud.get_num_seats(db) - crud.get_num_bookings_on_date(db, date)
+
+@app.get("/seats/{seat_id}", response_model=Seat, dependencies=[Depends(oauth2_scheme)])
+async def read_seat(seat_id: Annotated[int, Path(title="ID of seat")], db = Depends(get_db)):
+    return crud.get_seat(db, seat_id)
+
 
 # POST REQUESTS -----------------------------------------------------------
 
