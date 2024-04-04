@@ -12,9 +12,15 @@ from jose import JWTError, jwt
 
 # local imports
 from app import crud
-from app.models import Booking, BookingCreate, Seat, User, Token, TokenData
+from app.schemas import Booking, BookingCreate, Seat, User, Token, TokenData
 from app.dummy import dummy_db
 
+# sqlAlchemy
+from sqlalchemy.orm import Session
+from . import models, schemas
+from .database import SessionLocal, engine
+
+models.Base.metadata.create_all(bind=engine)
 
 # secret key used for encoding session data
 # should be in some .env file in production, not committed
@@ -47,7 +53,12 @@ app.add_middleware(
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 def get_db():
-    return dummy_db
+    # return dummy_db
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None):
     to_encode = data.copy()
@@ -125,7 +136,12 @@ async def read_seat(seat_id: Annotated[int, Path(title="ID of seat")], db = Depe
 
 # POST REQUESTS -----------------------------------------------------------
 
-
+@app.post("/users/", response_model=schemas.User)
+def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
+    db_user = crud.get_user_by_username(db, username=user.username)
+    if db_user:
+        raise HTTPException(status_code=400, detail="username already registered")
+    return crud.create_user(db=db, user=user)
 
 @app.post("/login")
 async def login_for_access_token(

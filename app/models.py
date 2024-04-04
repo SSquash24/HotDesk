@@ -1,54 +1,49 @@
-# pydantic models here
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Date, Float
+from sqlalchemy.orm import relationship
 
-from datetime import date
-from typing import Optional
-
-from pydantic import BaseModel, Field, FutureDate
+from .database import Base
 
 
+class User(Base):
+    __tablename__ = "users"
 
-# database models: 
-# base classes: contains common attributes
-# create classes: contains attributes input from user for creation of object
+    id = Column(Integer, primary_key=True)
+    username = Column(String, unique=True, index=True)
+    department = Column(String, index=True)   
+    hashed_password = Column(String)
 
-class UserBase(BaseModel):
-    username: str
-    department: str | None
+    bookings = relationship("Booking", back_populates="owner")
+    seat = relationship("Seat", back_populates="owner")
 
-class User(UserBase):
-    id: int
-    # hashed_password: str
 
-class UserCreate(UserBase):
-    # password: str
-    pass
+class Booking(Base):
+    __tablename__ = "bookings"
 
-class BookingBase(BaseModel):
-    seat_id: Optional[int] = Field(None, description="Seat ID")
-    date: date
+    id = Column(Integer, primary_key=True)
+    seat_id = Column(Integer, index=True)
+    date = Column(Date, index=True)
+    owner_id = Column(Integer, ForeignKey("users.id"))
 
-class Booking(BookingBase):
-    id: int
-    owner_id: int
+    owner = relationship("User", back_populates="bookings", foreign_keys=[owner_id])
 
-class BookingCreate(BookingBase):
-    date: FutureDate
+class Seat(Base):
+    __tablename__ = "seats"
 
-class SeatBase(BaseModel):
-    name: str
-    x: float
-    y: float
+    id = Column(Integer, primary_key=True)
+    name = Column(String, index=True)
+    x = Column(Float, index=True)
+    y = Column(Float, index=True)
+    owner_id = Column(Integer, ForeignKey("users.id"))
 
-class Seat(SeatBase):
-    id: int
+    owner = relationship("User", back_populates="seat", foreign_keys=[owner_id])
 
-class SeatCreate(SeatBase):
-    pass
+class Token(Base):
+    __tablename__ = "tokens"
 
-# other models:
-class Token(BaseModel):
-    access_token: str
-    token_type: str
+    access_token = Column(String, primary_key=True)
+    token_type = Column(String, index=True)
 
-class TokenData(BaseModel):
-    uid: int | None = None
+class TokenData(Base):
+    __tablename__ = "tokendata"
+
+    uid = Column(Integer, primary_key=True)
