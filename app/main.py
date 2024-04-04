@@ -11,7 +11,7 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 
 # local imports
-from app import crud
+from app import crud_dummy as crud
 from app.models import Booking, BookingCreate, Seat, User, Token, TokenData
 from app.dummy import dummy_db
 
