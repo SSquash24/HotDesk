@@ -23,6 +23,7 @@ function Calendar(props) {
     useEffect(() => {
         if (booked.fetch) {
             fetch(global.config.api_path + 'bookings/me', {
+                method: "GET",
                 headers: {
                     'Authorization': token
                 }

@@ -1,7 +1,6 @@
 
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { createMemoryHistory } from 'history';
-import { Router } from 'react-router-dom';
 import fetchMock from 'jest-fetch-mock';
 import Login from './Login/Login';
 import { TokenContext } from './Navigator/Navigator';
@@ -79,7 +78,6 @@ describe('Navigator', () => {
         });
     });
 
-    //quite broken past this point !!
 
     test('redirects to /login if GET /users/me request is denied', async () => {
         const history = createMemoryHistory()

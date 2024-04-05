@@ -7,7 +7,6 @@ import './Navigator.css'
 
 import {
     createContext,
-    useState,
     useEffect
 } from 'react';
 
@@ -19,16 +18,18 @@ import {
     Navigate,
   } from "react-router-dom";
 
+import usePersistState from '../usePersistState';
+
 export const TokenContext = createContext(null)
 
 function Navigator(props) {
 
-    const [state, changeState] = useState({
+    const [state, changeState] = usePersistState({
         uInfo: null,
         token: null,
         validated: false,
         attemptValidation: true
-    })
+    }, 'general')
 
 
     const setToken = (token) => {
