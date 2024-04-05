@@ -7,7 +7,8 @@ import './Navigator.css'
 
 import {
     createContext,
-    useEffect
+    useEffect,
+    useState
 } from 'react';
 
 import {
@@ -28,17 +29,17 @@ function Navigator(props) {
         uInfo: null,
         token: null,
         validated: false,
-        attemptValidation: true
     }, 'general')
 
+    const [tryValidation, setValidation] = useState(true)
 
     const setToken = (token) => {
         changeState({
             uInfo: null,
             token: token,
             validated: false,
-            attemptValidation: true
         })
+        setValidation(true)
     }
 
 
@@ -56,16 +57,16 @@ function Navigator(props) {
                     uInfo: await response.json(),
                     validated: true,
                     token: state.token,
-                    attemptValidation: false,
                 })
+                setValidation(false)
             }
             else {
                 changeState({
                     uInfo: null,
                     validated: false,
                     token: state.token,
-                    attemptValidation: false
                 })
+                setValidation(false)
             }
         } catch {
             alert("Failed to connect to server")
@@ -74,14 +75,14 @@ function Navigator(props) {
                     uInfo: null,
                     token: state.token,
                     validated: false,
-                    attemptValidation: false
                 })
+                setValidation(false)
         }
     }
 
 
     useEffect(() => {
-        if (state.attemptValidation) authorize() //attempt to authorize, if successfull a refresh will occur
+        if (tryValidation) authorize() //attempt to authorize, if successfull a refresh will occur
     })
 
     

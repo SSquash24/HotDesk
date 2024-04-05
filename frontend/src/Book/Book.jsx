@@ -21,7 +21,7 @@ function Book() {
         } else {
             fetch(global.config.api_path + "bookings/vacancies?date="
                     + String(day.year).padStart(4, '0')
-                    + '-' + String(day.month).padStart(2, '0')
+                    + '-' + String(day.month+1).padStart(2, '0')
                     + '-' + String(day.number).padStart(2, '0')
                 , {
                 method: "GET",
@@ -58,8 +58,8 @@ function Book() {
                 },
                 body: JSON.stringify({
                     "date": String(date.getFullYear()).padStart(4, '0')
-                            + '-' + String(date.getMonth()).padStart(2, '0')
-                            + '-' + String(date.getDay()).padStart(2, '0')
+                            + '-' + String(date.getMonth()+1).padStart(2, '0')
+                            + '-' + String(date.getDate()).padStart(2, '0')
                 })
             }).then(async (response) => {
                 if (response.ok) {
