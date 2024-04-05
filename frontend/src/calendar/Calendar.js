@@ -28,12 +28,14 @@ function Calendar(props) {
                     'Authorization': token
                 }
             }).then((response) => {
-                return response.json().then((json) => {
-                    setBooked({
-                        value: json.map((elem) => new Date(elem.date)),
-                        fetch: false
+                if (response.ok) {
+                    return response.json().then((json) => {
+                        setBooked({
+                            value: json.map((elem) => new Date(elem.date)),
+                            fetch: false
+                        })
                     })
-                })
+                }
             })
         }
     })

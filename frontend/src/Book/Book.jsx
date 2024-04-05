@@ -14,9 +14,9 @@ function Book() {
 
 
     function getVacancies(day) {
-        let date = new Date(day.year, day.month, day.number)
-        date.setDate(date.getDate() + 1)
-        if (day.isBooked || date <= new Date()) {
+        let lcldate = new Date(day.year, day.month, day.number)
+        lcldate.setDate(lcldate.getDate()+1)
+        if (day.isBooked || lcldate <= new Date()) {
             setSeats('-')
         } else {
             fetch(global.config.api_path + "bookings/vacancies?date="
@@ -57,7 +57,9 @@ function Book() {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    "date": (date.toISOString().split('T')[0])
+                    "date": String(date.getFullYear()).padStart(4, '0')
+                            + '-' + String(date.getMonth()).padStart(2, '0')
+                            + '-' + String(date.getDay()).padStart(2, '0')
                 })
             }).then(async (response) => {
                 if (response.ok) {

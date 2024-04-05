@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useMemo, useEffect } from "react";
+import { useMemo } from "react";
 
 export default function usePersistState(initial_value, id) {
     //set init value
@@ -16,10 +16,6 @@ export default function usePersistState(initial_value, id) {
 
     const [state, setState] = useState(_initial_value)
 
-    // useEffect(() => {
-    //     const state_str = JSON.stringify(state);
-    //     localStorage.setItem('state' + id, state_str)
-    // }, [state])
 
     function wrappedSetState(newState) {
         const state_str = JSON.stringify(newState);
@@ -28,5 +24,4 @@ export default function usePersistState(initial_value, id) {
     }
 
     return [state, wrappedSetState]
-    // return [state, setState]
 }
