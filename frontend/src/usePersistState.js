@@ -12,7 +12,7 @@ export default function usePersistState(initial_value, id) {
 
         // otherwise use initial_value
         return initial_value
-    }, [])
+    }, [initial_value, id])
 
     const [state, setState] = useState(_initial_value)
 
