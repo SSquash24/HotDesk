@@ -59,4 +59,3 @@ def get_seat(db: Session, sid: int):
 
 def get_num_seats(db: Session):
     return len(db.query(models.Seat).all())
-

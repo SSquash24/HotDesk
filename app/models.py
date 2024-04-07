@@ -13,7 +13,6 @@ class User(Base):
     hashed_password = Column(String)
 
     bookings = relationship("Booking", back_populates="owner")
-    seat = relationship("Seat", back_populates="owner")
 
 
 class Booking(Base):
@@ -33,9 +32,6 @@ class Seat(Base):
     name = Column(String, index=True)
     x = Column(Float, index=True)
     y = Column(Float, index=True)
-    owner_id = Column(Integer, ForeignKey("users.id"))
-
-    owner = relationship("User", back_populates="seat", foreign_keys=[owner_id])
 
 class Token(Base):
     __tablename__ = "tokens"

@@ -53,13 +53,34 @@ app.add_middleware(
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
+
 def get_db():
     # return dummy_db
     db = SessionLocal()
+    # db.query(models.User).delete()
+    # db.commit()
     try:
         yield db
     finally:
         db.close()
+
+# testing purposes --- initializes some users into the database if it is empty
+def create_dummy(db):
+    for user in dummy_db["users"].values():
+        db.add(user)
+    for booking in dummy_db["bookings"].values():
+        db.add(booking)
+    for seat in dummy_db["seats"].values():
+        db.add(seat)
+    db.commit()
+        
+    
+# testing purposes --- clears database
+def clear_db(db):
+    db.query(models.User).delete()
+    db.query(models.Booking).delete()
+    db.query(models.Seat).delete()
+
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None):
     to_encode = data.copy()
@@ -75,9 +96,9 @@ def authenticate_user(db, username: str, password: str):
     user = crud.get_user_by_username(db, username)
     if not user:
         return False
-    # no passwords for now
-    # if not verify_password(password, user.hashed_password):
-    #     return False
+    # fix hashing at some point
+    if not (password + "insert hashing here" == user.hashed_password):
+        return False
     return user
 
 async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db = Depends(get_db)):
@@ -102,40 +123,46 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db = D
 
 # GET REQUESTS  -----------------------------------------------------------
 
-
 @app.get("/users/me", response_model=User)
-async def read_current_user(user: Annotated[User, Depends(get_current_user)]):
+def read_current_user(user: Annotated[User, Depends(get_current_user)]):
     return user
 
 @app.get("/bookings/me", response_model=list[Booking])
-async def read_current_bookings(user: Annotated[User, Depends(get_current_user)], db = Depends(get_db)):
+def read_current_bookings(user: Annotated[User, Depends(get_current_user)], db = Depends(get_db)):
     return crud.get_bookings_by_user(db, user.id)
 
 @app.get("/bookings/date", response_model=list[Booking], dependencies=[Depends(oauth2_scheme)])
-async def read_bookings_on_date(date: date, db = Depends(get_db)):
+def read_bookings_on_date(date: date, db = Depends(get_db)):
     return crud.get_bookings_on_date(db, date)
 
 @app.get("/bookings/count", response_model=int, dependencies=[Depends(oauth2_scheme)])
-async def read_num_bookings_on_date(date: date, db = Depends(get_db)):
+def read_num_bookings_on_date(date: date, db = Depends(get_db)):
     return crud.get_num_bookings_on_date(db, date)
 
 @app.get("/bookings/today", response_model=Booking)
-async def read_todays_booking(user: Annotated[User, Depends(get_current_user)], db = Depends(get_db)):
+def read_todays_booking(user: Annotated[User, Depends(get_current_user)], db = Depends(get_db)):
     booking = crud.get_todays_booking(db, user.id)
     if (not booking):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No booking today")
     return booking
 
 @app.get("/bookings/vacancies", response_model=int, dependencies=[Depends(oauth2_scheme)])
-async def read_num_vacancies_on_date(date: date, db = Depends(get_db)):
+def read_num_vacancies_on_date(date: date, db = Depends(get_db)):
     return crud.get_num_seats(db) - crud.get_num_bookings_on_date(db, date)
 
 @app.get("/seats/{seat_id}", response_model=Seat, dependencies=[Depends(oauth2_scheme)])
-async def read_seat(seat_id: Annotated[int, Path(title="ID of seat")], db = Depends(get_db)):
+def read_seat(seat_id: Annotated[int, Path(title="ID of seat")], db = Depends(get_db)):
     return crud.get_seat(db, seat_id)
 
 
 # POST REQUESTS -----------------------------------------------------------
+
+# testing purposes --- clears and initializes database with the dummy database
+@app.post("/setup")
+def init(db = Depends(get_db)):
+    clear_db(db)
+    create_dummy(db)
+    print("cleared and initialized database")
 
 @app.post("/users/", response_model=schemas.User)
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
