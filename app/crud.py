@@ -47,7 +47,7 @@ def get_num_bookings_on_date(db, d: date):
     return len(get_bookings_on_date(db, d))
 
 def create_booking(db: Session, booking: schemas.BookingCreate, uid: int):
-    db_booking = models.Booking(**booking.dict(), owner_id=uid)
+    db_booking = models.Booking(**booking.model_dump(), owner_id=uid)
     db.add(db_booking)
     db.commit()
     db.refresh(db_booking)
