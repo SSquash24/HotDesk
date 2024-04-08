@@ -1,0 +1,11 @@
+.Logout {
+    display: grid;
+    align-content: center;
+    justify-content: center;
+}
+
+.logoutButton {
+    margin-top: 100%;
+    font-size: x-large;
+    padding: 10px;
+}
