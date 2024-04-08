@@ -43,22 +43,22 @@ function Navigator(props) {
     }
 
 
-    const authorize = async () => {
-        try {
-            const response = await fetch(global.config.api_path + 'users/me', {
-                method: "GET",
-                headers: {
-                    'Authorization': state.token,
-                    "accept": "application/json"
-                }
-            })
+    const authorize = () => {
+        fetch(global.config.api_path + 'users/me', {
+            method: "GET",
+            headers: {
+                'Authorization': state.token,
+                "accept": "application/json"
+            }
+        }).then(async (response) => {
+            setValidation(false)
             if (response.ok) {
+                let json = await response.json();
                 changeState({
-                    uInfo: await response.json(),
+                    uInfo: json,
                     validated: true,
                     token: state.token,
                 })
-                setValidation(false)
             }
             else {
                 changeState({
@@ -66,18 +66,20 @@ function Navigator(props) {
                     validated: false,
                     token: state.token,
                 })
-                setValidation(false)
             }
-        } catch {
+        }).catch((err) => {
             alert("Failed to connect to server")
+            setValidation(false)
             if (state.validated)
+            {
                 changeState({
                     uInfo: null,
                     token: state.token,
                     validated: false,
                 })
-                setValidation(false)
-        }
+            }
+        })
+            
     }
 
 

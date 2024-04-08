@@ -22,6 +22,7 @@ function Calendar(props) {
 
     useEffect(() => {
         if (booked.fetch) {
+
             fetch(global.config.api_path + 'bookings/me', {
                 method: "GET",
                 headers: {
@@ -36,6 +37,11 @@ function Calendar(props) {
                         })
                     })
                 }
+            }).catch((err) => {
+                setBooked({
+                    value: [],
+                    fetch: false
+                })
             })
         }
     })

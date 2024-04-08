@@ -1,7 +1,10 @@
 import { render, screen } from '@testing-library/react';
 import Book from './Book';
 import { TokenContext } from '../Navigator/Navigator';
+import fetchMock from 'jest-fetch-mock'
 import  '../config';
+
+
 
 describe('BookPage', () => {
 
@@ -19,8 +22,12 @@ describe('BookPage', () => {
 
   });
 
-  test('page has calendar', () => {
-    expect(screen.getByText(new Date().getFullYear())).toBeInTheDocument()
+  test('page has expected components', () => {
+    expect(screen.getByText('Booking Page')).toBeInTheDocument() // title
+    expect(screen.getByText(new Date().getFullYear())).toBeInTheDocument() // calendar
+    expect(screen.getByText('Book')).toBeInTheDocument() // book button
+    expect(screen.getByText('Seats available: -')).toBeInTheDocument()
+
   })
 
 })

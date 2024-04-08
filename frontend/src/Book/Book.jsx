@@ -38,6 +38,8 @@ function Book() {
                     setSeats('ERR')
                 }
 
+            }).catch((err) => {
+                setSeats('ERR, could not connect')  
             })
         }
     }
@@ -49,29 +51,27 @@ function Book() {
     };
 
     const handleBookClick = () => {
-        try {
-            fetch(global.config.api_path + "bookings/book", {
-                method: "POST",
-                headers: {
-                    'Authorization': token,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    "date": String(date.getFullYear()).padStart(4, '0')
-                            + '-' + String(date.getMonth()+1).padStart(2, '0')
-                            + '-' + String(date.getDate()).padStart(2, '0')
-                })
-            }).then(async (response) => {
-                if (response.ok) {
-                    alert("Successful Booking for " + date.toDateString())
-                } else {
-                    let json = await response.json()
-                    alert("Error booking: Server returned bad response: " + json.detail[0].msg)
-                }
+        fetch(global.config.api_path + "bookings/book", {
+            method: "POST",
+            headers: {
+                'Authorization': token,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                "date": String(date.getFullYear()).padStart(4, '0')
+                        + '-' + String(date.getMonth()+1).padStart(2, '0')
+                        + '-' + String(date.getDate()).padStart(2, '0')
             })
-        } catch {
+        }).then(async (response) => {
+            if (response.ok) {
+                alert("Successful Booking for " + date.toDateString())
+            } else {
+                let json = await response.json()
+                alert("Error booking: Server returned bad response: " + json.detail[0].msg)
+            }
+        }).catch((err) => {
             alert("Error booking: Failed to connect to server")
-        }
+        })
     }
 
 
