@@ -47,9 +47,20 @@ describe('NavigatorComponent', () => {
         render(<Navigator />);
     
         await waitFor(() => {
-          expect(screen.getAllByText('Profile')[0]).toBeInTheDocument();
+          expect(screen.getAllByText('Profile')).toHaveLength(2);
         });
     });
 
+    test('has navbar component (when request accepted)', async () => {
+        fetch.mockResponse(JSON.stringify({ username: 'testUser' }))
+        render(<Navigator />)
+
+        await waitFor(() => {
+            expect(screen.getAllByText('Profile')[0]).toBeInTheDocument();
+            expect(screen.getAllByText('Book')[0]).toBeInTheDocument();
+            expect(screen.getAllByText('Logout')[0]).toBeInTheDocument();
+        })
+        
+    })
 
 })

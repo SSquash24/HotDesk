@@ -83,7 +83,7 @@ function Book() {
                 <div className="bookingForm">
                     <h2>Date: {date.toDateString()}</h2>
                     <h3>Seats available: {seats}</h3>
-                    <button id="bookButton" onClick={handleBookClick} disabled={typeof(seats) != 'number' || seats <= 0}>Book</button>
+                    <button id="bookButton" data-testid="book-button" onClick={handleBookClick} disabled={typeof(seats) != 'number' || seats <= 0}>Book</button>
                 </div>
             </div>
         </div>

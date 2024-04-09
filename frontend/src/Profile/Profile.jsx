@@ -41,7 +41,7 @@ function UserInfo(props) {
   return (
     <div className="UInfo">
       <p >
-        name: {props.uInfo.username} <br/>
+        Name: {props.uInfo.username} <br/>
         Team: {props.uInfo.department}
       </p>
       <div className="sideBySide">

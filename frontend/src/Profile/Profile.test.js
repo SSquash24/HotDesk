@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import Profile from './Profile';
 import { TokenContext } from '../Navigator/Navigator';
 
@@ -24,8 +24,27 @@ describe('ProfilePage', () => {
   test('renders without crashing', () => {
   });
 
-  test('page has calendar', () => {
-    expect(screen.getByText(new Date().getFullYear())).toBeInTheDocument()
+  test('page has expected components', () => {
+    const uinfo = document.getElementsByClassName('UInfo')[0]
+
+    expect(uinfo.innerHTML).toMatch('Name: John Doe');
+    expect(screen.getByText("Today's seat:")).toBeInTheDocument();
+    expect(uinfo.innerHTML).toMatch('Team: HR');
+    expect(screen.getByText(new Date().getFullYear())).toBeInTheDocument();
+    expect(screen.getByText('Date: ' + new Date().toDateString())).toBeInTheDocument();
+  })
+
+
+  test('shown date changes when calendar is clicked', async () => {
+    let today = new Date();
+    let testDate = '15'
+    if (testDate === today.getDate()) testDate = '16'
+    const toClick = screen.getByText(testDate);
+    fireEvent.click(toClick)
+    today.setDate(testDate)
+    await waitFor(() => {
+      expect(screen.getByText('Date: ' + today.toDateString())).toBeInTheDocument();
+    })
   })
 
 })

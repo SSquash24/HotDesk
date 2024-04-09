@@ -1,12 +1,14 @@
-import { render } from '@testing-library/react';
+import { fireEvent, render, waitFor, screen } from '@testing-library/react';
 import Logout from './Logout';
 import { TokenContext } from '../Navigator/Navigator';
 import  '../config';
 
 describe('LogoutPage', () => {
 
+  const setToken = jest.fn()
+
   beforeEach(() => {
-    const setToken = jest.fn()
+    jest.clearAllMocks();
     render(
       <TokenContext.Provider value={{token: "test", setToken: setToken}}>
         <Logout />
@@ -16,6 +18,18 @@ describe('LogoutPage', () => {
   })
 
   test('renders without crashing', () => {
+  })
+
+  test('has logout button', () => {
+    expect(screen.getByText("Logout")).toBeInTheDocument();
+  })
+
+  test('logout button resets token', async () => {
+    const logoutButton = screen.getByText("Logout");
+    fireEvent.click(logoutButton);
+    await waitFor(() => {
+      expect(setToken).toHaveBeenCalledTimes(1);
+    })
   })
 
 })
