@@ -157,12 +157,6 @@ def read_seat(seat_id: Annotated[int, Path(title="ID of seat")], db = Depends(ge
 
 # POST REQUESTS -----------------------------------------------------------
 
-# testing purposes --- clears and initializes database with the dummy database
-@app.post("/setup")
-def init(db = Depends(get_db)):
-    clear_db(db)
-    create_dummy(db)
-    print("cleared and initialized database")
 
 @app.post("/users/", response_model=schemas.User)
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
@@ -189,10 +183,54 @@ async def login_for_access_token(
     )
     return Token(access_token=access_token, token_type="bearer")
 
+# testing purposes --- clears and initializes database with the dummy database
+@app.post("/setup")
+async def init(user: Annotated[User, Depends(get_current_user)], db = Depends(get_db)):
+    clear_db(db)
+    create_dummy(db)
+    return "cleared and initialized database"
 
-
-
+# will not book the same person twice on the same day, nor overbook
 @app.post("/bookings/book", response_model=Booking)
 async def book(booking: BookingCreate, user: Annotated[User, Depends(get_current_user)], db = Depends(get_db)):
-    booking = crud.create_booking(db, booking, user.id)
-    return booking
+    db_booking = crud.create_booking(db, booking, user.id)
+    if db_booking == -1:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Booking already exists"
+        )
+    if db_booking == -2:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Booking full"
+        )
+    return db_booking
+
+
+# PUT REQUESTS -----------------------------------------------------------
+
+
+# unsure if this is needed here specifically but being able to assign a booking to a specific seat is needed as initially
+# bookings will come with no seat (default value -1) before the algorithm assigns them to everyone
+@app.put("/bookings/assign/")
+async def assign(booking: int, seat: int, user: Annotated[User, Depends(get_current_user)], db = Depends(get_db)):
+    db_booking = crud.assign_seat_to_booking(db, booking, seat)
+    if not db_booking:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Booking not found"
+        )
+    return db_booking
+
+
+# DELETE REQUESTS -----------------------------------------------------------
+
+@app.delete("/bookings/delete")
+async def delete(d: date, user: Annotated[User, Depends(get_current_user)], db = Depends(get_db)):
+    db_booking = crud.delete_booking_on_date(db, user.id, d)
+    if db_booking == -1:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="No booking to delete"
+        )
+    return "Successfully deleted booking"

@@ -19,7 +19,7 @@ class Booking(Base):
     __tablename__ = "bookings"
 
     id = Column(Integer, primary_key=True)
-    seat_id = Column(Integer, index=True)
+    seat_id = Column(Integer, index=True, default=-1)
     date = Column(Date, index=True)
     owner_id = Column(Integer, ForeignKey("users.id"))
 
