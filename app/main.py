@@ -9,17 +9,15 @@ from fastapi import Depends, FastAPI, Path, Request, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
-
-# local imports
-from app import crud
-# from app import crud_dummy as crud
-from app.schemas import Booking, BookingCreate, Seat, User, Token, TokenData
-from app.dummy import dummy_db
-
 # sqlAlchemy
 from sqlalchemy.orm import Session
-from . import models, schemas
-from .database import SessionLocal, engine
+
+# local imports
+from app import crud, models, schemas
+from app.database import SessionLocal, engine
+# from app import crud_dummy as crud
+from app.dummy import dummy_db
+
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -57,8 +55,6 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 def get_db():
     # return dummy_db
     db = SessionLocal()
-    # db.query(models.User).delete()
-    # db.commit()
     try:
         yield db
     finally:
@@ -97,8 +93,8 @@ def authenticate_user(db, username: str, password: str):
     if not user:
         return False
     # fix hashing at some point
-    if not (password + "insert hashing here" == user.hashed_password):
-        return False
+    # if not (password + "insert hashing here" == user.hashed_password):
+    #     return False
     return user
 
 async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db = Depends(get_db)):
@@ -112,7 +108,7 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db = D
         uid: str = payload.get("sub")
         if uid is None:
             raise credentials_exception
-        token_data = TokenData(uid=int(uid))
+        token_data = schemas.TokenData(uid=int(uid))
     except JWTError:
         raise credentials_exception
     user = crud.get_user(db, token_data.uid)
@@ -123,35 +119,52 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db = D
 
 # GET REQUESTS  -----------------------------------------------------------
 
-@app.get("/users/me", response_model=User)
-def read_current_user(user: Annotated[User, Depends(get_current_user)]):
+@app.get("/users/me", response_model=schemas.User)
+def read_current_user(user: Annotated[schemas.User, Depends(get_current_user)]):
     return user
 
-@app.get("/bookings/me", response_model=list[Booking])
-def read_current_bookings(user: Annotated[User, Depends(get_current_user)], db = Depends(get_db)):
+@app.get("/bookings/me", response_model=list[schemas.Booking])
+def read_current_bookings(
+    user: Annotated[schemas.User, Depends(get_current_user)], 
+    db = Depends(get_db)
+):
     return crud.get_bookings_by_user(db, user.id)
 
-@app.get("/bookings/date", response_model=list[Booking], dependencies=[Depends(oauth2_scheme)])
+@app.get("/bookings/date", 
+         response_model=list[schemas.Booking], 
+         dependencies=[Depends(oauth2_scheme)])
 def read_bookings_on_date(date: date, db = Depends(get_db)):
     return crud.get_bookings_on_date(db, date)
 
-@app.get("/bookings/count", response_model=int, dependencies=[Depends(oauth2_scheme)])
+@app.get("/bookings/count", 
+         response_model=int, 
+         dependencies=[Depends(oauth2_scheme)])
 def read_num_bookings_on_date(date: date, db = Depends(get_db)):
     return crud.get_num_bookings_on_date(db, date)
 
-@app.get("/bookings/today", response_model=Booking)
-def read_todays_booking(user: Annotated[User, Depends(get_current_user)], db = Depends(get_db)):
+@app.get("/bookings/today", response_model=schemas.Booking)
+def read_todays_booking(
+    user: Annotated[schemas.User, Depends(get_current_user)], 
+    db = Depends(get_db)
+):
     booking = crud.get_todays_booking(db, user.id)
     if (not booking):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No booking today")
     return booking
 
-@app.get("/bookings/vacancies", response_model=int, dependencies=[Depends(oauth2_scheme)])
+@app.get("/bookings/vacancies", 
+         response_model=int, 
+         dependencies=[Depends(oauth2_scheme)])
 def read_num_vacancies_on_date(date: date, db = Depends(get_db)):
     return crud.get_num_seats(db) - crud.get_num_bookings_on_date(db, date)
 
-@app.get("/seats/{seat_id}", response_model=Seat, dependencies=[Depends(oauth2_scheme)])
-def read_seat(seat_id: Annotated[int, Path(title="ID of seat")], db = Depends(get_db)):
+@app.get("/seats/{seat_id}", 
+         response_model=schemas.Seat, 
+         dependencies=[Depends(oauth2_scheme)])
+def read_seat(
+    seat_id: Annotated[int, Path(title="ID of seat")], 
+    db = Depends(get_db)
+):
     return crud.get_seat(db, seat_id)
 
 
@@ -162,14 +175,14 @@ def read_seat(seat_id: Annotated[int, Path(title="ID of seat")], db = Depends(ge
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db_user = crud.get_user_by_username(db, username=user.username)
     if db_user:
-        raise HTTPException(status_code=400, detail="username already registered")
+        raise HTTPException(status_code=400, detail="User already exists")
     return crud.create_user(db=db, user=user)
 
 @app.post("/login")
 async def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     db = Depends(get_db)
-) -> Token:
+) -> schemas.Token:
     user = authenticate_user(db, form_data.username, form_data.password)
     if not user:
         raise HTTPException(
@@ -181,30 +194,35 @@ async def login_for_access_token(
     access_token = create_access_token(
         data={"sub": str(user.id)}, expires_delta=access_token_expires
     )
-    return Token(access_token=access_token, token_type="bearer")
+    return schemas.Token(access_token=access_token, token_type="bearer")
 
 # testing purposes --- clears and initializes database with the dummy database
 @app.post("/setup")
-async def init(user: Annotated[User, Depends(get_current_user)], db = Depends(get_db)):
+async def init(db = Depends(get_db)):
     clear_db(db)
     create_dummy(db)
     return "cleared and initialized database"
 
-# will not book the same person twice on the same day, nor overbook
-@app.post("/bookings/book", response_model=Booking)
-async def book(booking: BookingCreate, user: Annotated[User, Depends(get_current_user)], db = Depends(get_db)):
-    db_booking = crud.create_booking(db, booking, user.id)
-    if db_booking == -1:
+@app.post("/bookings/book", response_model=schemas.Booking)
+async def book(
+    booking: schemas.BookingCreate, 
+    user: Annotated[schemas.User, Depends(get_current_user)], 
+    db = Depends(get_db)
+):
+    """ will not book the same person twice on the same day, nor overbook """
+    curr_booking = crud.get_bookings_by_user_on_date(db, user.id, booking.date)
+    if (curr_booking):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Booking already exists"
         )
-    if db_booking == -2:
+    if (crud.get_num_seats(db) - 
+        crud.get_num_bookings_on_date(db, booking.date) <= 0):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Booking full"
         )
-    return db_booking
+    return crud.create_booking(db, booking, user.id)
 
 
 # PUT REQUESTS -----------------------------------------------------------
@@ -212,25 +230,31 @@ async def book(booking: BookingCreate, user: Annotated[User, Depends(get_current
 
 # unsure if this is needed here specifically but being able to assign a booking to a specific seat is needed as initially
 # bookings will come with no seat (default value -1) before the algorithm assigns them to everyone
-@app.put("/bookings/assign/")
-async def assign(booking: int, seat: int, user: Annotated[User, Depends(get_current_user)], db = Depends(get_db)):
-    db_booking = crud.assign_seat_to_booking(db, booking, seat)
-    if not db_booking:
+@app.put("/bookings/assign/{booking_id}", dependencies=[Depends(oauth2_scheme)])
+async def assign(
+    booking_id: Annotated[int, Path(title="ID of booking")], 
+    seat_id: int, 
+    db = Depends(get_db)
+):
+    try:
+        db_booking = crud.update_booking_with_seat(db, booking_id, seat_id)
+        return db_booking
+    except:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Booking not found"
         )
-    return db_booking
 
 
 # DELETE REQUESTS -----------------------------------------------------------
 
 @app.delete("/bookings/delete")
-async def delete(d: date, user: Annotated[User, Depends(get_current_user)], db = Depends(get_db)):
-    db_booking = crud.delete_booking_on_date(db, user.id, d)
-    if db_booking == -1:
+async def delete(d: date, user: Annotated[schemas.User, Depends(get_current_user)], db = Depends(get_db)):
+    db_booking = crud.get_bookings_by_user_on_date(db, user.id, d)
+    if (not db_booking):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="No booking to delete"
         )
+    crud.delete_booking_on_date(db, user.id, d)
     return "Successfully deleted booking"

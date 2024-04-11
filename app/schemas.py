@@ -1,12 +1,13 @@
 # pydantic models here
 
 from datetime import date
-from typing import Optional
+from typing import Annotated, Optional
 
-from pydantic import BaseModel, Field, FutureDate
+from pydantic import AfterValidator, BaseModel, Field, FutureDate
 
-
-
+def check_date_in_future(v: date):
+    assert date.today() <= v, "Date should be in the future"
+    return v
 # database models: 
 # base classes: contains common attributes
 # create classes: contains attributes input from user for creation of object
@@ -17,7 +18,11 @@ class UserBase(BaseModel):
 
 class User(UserBase):
     id: int
-    # hashed_password: str
+    hashed_password: str
+
+    class Config:
+        from_attributes = True
+
 
 class UserCreate(UserBase):
     password: str
@@ -31,6 +36,10 @@ class Booking(BookingBase):
     id: int
     owner_id: int
 
+    class Config:
+        from_attributes = True
+
+
 class BookingCreate(BookingBase):
     date: FutureDate
 
@@ -41,6 +50,9 @@ class SeatBase(BaseModel):
 
 class Seat(SeatBase):
     id: int
+
+    class Config:
+        from_attributes = True
 
 class SeatCreate(SeatBase):
     pass
