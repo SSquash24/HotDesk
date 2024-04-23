@@ -1,5 +1,5 @@
 import { fireEvent, render, waitFor, screen } from '@testing-library/react';
-import Logout from './Logout';
+import Account from './Account';
 import { TokenContext } from '../Navigator/Navigator';
 import  '../config';
 
@@ -11,7 +11,7 @@ describe('LogoutPage', () => {
     jest.clearAllMocks();
     render(
       <TokenContext.Provider value={{token: "test", setToken: setToken}}>
-        <Logout />
+        <Account />
       </TokenContext.Provider>
     )
     expect(setToken).toHaveBeenCalledTimes(0)

@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import Profile from './Profile';
+import Home from './Home';
 import { TokenContext } from '../Navigator/Navigator';
 
 import '../config'
@@ -9,13 +9,13 @@ const uInfo = {
   department: "HR"
 }
 
-describe('ProfilePage', () => {
+describe('HomePage', () => {
 
   beforeEach(() => {
     const setToken = jest.fn();
     render(
     <TokenContext.Provider value={{token: "test", setToken: setToken}}>
-      <Profile uInfo={uInfo} />;
+      <Home uInfo={uInfo} />;
     </TokenContext.Provider>)
     expect(setToken).toHaveBeenCalledTimes(0)
   });

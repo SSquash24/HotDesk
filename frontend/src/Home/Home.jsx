@@ -70,14 +70,14 @@ function Bookings() {
   )
 }
 
-function App(props) {
+function Home(props) {
   return (
     <div className="App">
-      <h1>Profile</h1>
+      <h1>Home Page: </h1>
       <UserInfo uInfo={props.uInfo} />
       <Bookings props />
     </div>
   );
 }
 
-export default App;
+export default Home;

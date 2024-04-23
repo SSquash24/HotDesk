@@ -1,8 +1,8 @@
-import Profile from '../Profile/Profile';
+import Home from '../Home/Home';
 import Book from '../Book/Book'
-import Logout from '../Logout/Logout'
+import Account from '../Account/Account'
 import Login from '../Login/Login'
-import './Navigator.css'
+import './navigator.css'
 
 
 import {
@@ -97,9 +97,9 @@ function Navigator(props) {
             </>
     } else {
         pages = <>
-                <Route exact path="/" element={<Profile uInfo={state.uInfo}/>} />
+                <Route exact path="/" element={<Home uInfo={state.uInfo}/>} />
                 <Route exact path="/book" element={<Book />} />
-                <Route exact path="/logout" element={<Logout />} />
+                <Route exact path="/account" element={<Account />} />
                 <Route path='*' element={<Navigate to="/" />}/>
             </>
     }
@@ -108,9 +108,9 @@ function Navigator(props) {
         <Router props>
 
             {state.validated && <nav className='navbar'>
-                <NavLink to='/'>Profile</NavLink>
+                <NavLink to='/'>Home</NavLink>
                 <NavLink to='/book'>Book</NavLink>
-                <NavLink to='/logout'>Logout</NavLink>
+                <NavLink to='/account'>Account</NavLink>
             </nav>}
 
             <div className='main'>
