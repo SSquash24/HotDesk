@@ -47,7 +47,7 @@ describe('NavigatorComponent', () => {
         render(<Navigator />);
     
         await waitFor(() => {
-          expect(screen.getAllByText('Profile')).toHaveLength(2);
+          expect(screen.getByText('Home Page:')).toBeInTheDocument();
         });
     });
 
@@ -56,9 +56,9 @@ describe('NavigatorComponent', () => {
         render(<Navigator />)
 
         await waitFor(() => {
-            expect(screen.getAllByText('Profile')[0]).toBeInTheDocument();
+            expect(screen.getAllByText('Home')[0]).toBeInTheDocument();
             expect(screen.getAllByText('Book')[0]).toBeInTheDocument();
-            expect(screen.getAllByText('Logout')[0]).toBeInTheDocument();
+            expect(screen.getAllByText('Account')[0]).toBeInTheDocument();
         })
         
     })
