@@ -15,11 +15,11 @@ def check_date_in_future(v: date):
 class UserBase(BaseModel):
     username: str
     department: str | None
+    role: str
 
 class User(UserBase):
     id: int
     hashed_password: str
-
     class Config:
         from_attributes = True
 
@@ -64,3 +64,4 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     uid: int | None = None
+    role: str = ""

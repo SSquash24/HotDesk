@@ -30,7 +30,11 @@ SECRET_KEY = "6d7b5968fccbc2b4d484280030d9424536091a64a9bd7c167e91ea18aaa98312"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
-
+CREDENTIALS_EXCEPTION = HTTPException(
+    status_code=status.HTTP_401_UNAUTHORIZED,
+    detail="Could not validate credentials",
+    headers={"WWW-Authenticate": "Bearer"},
+)
 
 app = FastAPI()
 
@@ -97,25 +101,27 @@ def authenticate_user(db, username: str, password: str):
     #     return False
     return user
 
-async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db = Depends(get_db)):
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
+async def verify_token(token: Annotated[str, Depends(oauth2_scheme)]):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         uid: str = payload.get("sub")
-        if uid is None:
-            raise credentials_exception
-        token_data = schemas.TokenData(uid=int(uid))
+        role: str = payload.get("role")
+        if uid is None or role is None:
+            raise CREDENTIALS_EXCEPTION
+        token_data = schemas.TokenData(uid=int(uid), role=role)
     except JWTError:
-        raise credentials_exception
+        raise CREDENTIALS_EXCEPTION
+    return token_data
+
+async def get_current_user(token_data: Annotated[str, Depends(verify_token)], db = Depends(get_db)):
     user = crud.get_user(db, token_data.uid)
     if user is None:
-        raise credentials_exception
+        raise CREDENTIALS_EXCEPTION
     return user
 
+async def verify_admin(token_data: Annotated[str, Depends(verify_token)]):
+    if(token_data.role != "admin"):
+        raise CREDENTIALS_EXCEPTION
 
 # GET REQUESTS  -----------------------------------------------------------
 
@@ -132,13 +138,13 @@ def read_current_bookings(
 
 @app.get("/bookings/date", 
          response_model=list[schemas.Booking], 
-         dependencies=[Depends(oauth2_scheme)])
+         dependencies=[Depends(verify_token)])
 def read_bookings_on_date(date: date, db = Depends(get_db)):
     return crud.get_bookings_on_date(db, date)
 
 @app.get("/bookings/count", 
          response_model=int, 
-         dependencies=[Depends(oauth2_scheme)])
+         dependencies=[Depends(verify_token)])
 def read_num_bookings_on_date(date: date, db = Depends(get_db)):
     return crud.get_num_bookings_on_date(db, date)
 
@@ -154,13 +160,13 @@ def read_todays_booking(
 
 @app.get("/bookings/vacancies", 
          response_model=int, 
-         dependencies=[Depends(oauth2_scheme)])
+         dependencies=[Depends(verify_token)])
 def read_num_vacancies_on_date(date: date, db = Depends(get_db)):
     return crud.get_num_seats(db) - crud.get_num_bookings_on_date(db, date)
 
 @app.get("/seats/{seat_id}", 
          response_model=schemas.Seat, 
-         dependencies=[Depends(oauth2_scheme)])
+         dependencies=[Depends(verify_token)])
 def read_seat(
     seat_id: Annotated[int, Path(title="ID of seat")], 
     db = Depends(get_db)
@@ -171,7 +177,9 @@ def read_seat(
 # POST REQUESTS -----------------------------------------------------------
 
 
-@app.post("/users/", response_model=schemas.User)
+@app.post("/users/", 
+          response_model=schemas.User, 
+          dependencies=[Depends(verify_admin)])
 def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db_user = crud.get_user_by_username(db, username=user.username)
     if db_user:
@@ -192,7 +200,8 @@ async def login_for_access_token(
         )
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
-        data={"sub": str(user.id)}, expires_delta=access_token_expires
+        data={"sub": str(user.id), "role": user.role}, 
+        expires_delta=access_token_expires
     )
     return schemas.Token(access_token=access_token, token_type="bearer")
 
@@ -230,7 +239,7 @@ async def book(
 
 # unsure if this is needed here specifically but being able to assign a booking to a specific seat is needed as initially
 # bookings will come with no seat (default value -1) before the algorithm assigns them to everyone
-@app.put("/bookings/assign/{booking_id}", dependencies=[Depends(oauth2_scheme)])
+@app.put("/bookings/assign/{booking_id}", dependencies=[Depends(verify_admin)])
 async def assign(
     booking_id: Annotated[int, Path(title="ID of booking")], 
     seat_id: int, 
@@ -249,7 +258,11 @@ async def assign(
 # DELETE REQUESTS -----------------------------------------------------------
 
 @app.delete("/bookings/delete")
-async def delete(d: date, user: Annotated[schemas.User, Depends(get_current_user)], db = Depends(get_db)):
+async def delete(
+    d: date, 
+    user: Annotated[schemas.User, Depends(get_current_user)], 
+    db = Depends(get_db)
+):
     db_booking = crud.get_bookings_by_user_on_date(db, user.id, d)
     if (not db_booking):
         raise HTTPException(

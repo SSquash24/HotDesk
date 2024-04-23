@@ -6,18 +6,28 @@ dummy_users = {
         "id": 0,
         "username": "James",
         "department": "HR",
+        "role": "user",
         "hashed_password": "password"+ "insert hashing here"
     }), 
     1: User(**{
         "id": 1,
         "username": "Jack",
         "department": "Finance",
+        "role": "user",
         "hashed_password": "password"+ "insert hashing here"
     }), 
     2: User(**{
         "id": 2,
         "username": "Sarah",
         "department": "Finance",
+        "role": "user",
+        "hashed_password": "password"+ "insert hashing here"
+    }),
+    3: User(**{
+        "id": 3,
+        "username": "Admin",
+        "department": "Admin",
+        "role": "admin",
         "hashed_password": "password"+ "insert hashing here"
     })
 }

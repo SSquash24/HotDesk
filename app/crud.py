@@ -1,14 +1,13 @@
 # create, read, update, delete methods here
 # not sure if we need a separate dummy version for testing
 
-# Code below is for testing purposes, will need to be modified!
 
 from datetime import date
 
 from sqlalchemy import delete, select, func
 from sqlalchemy.orm import Session
 
-from . import models, schemas
+from app import models, schemas
 
 
 def get_user(db: Session, uid: int):
@@ -31,7 +30,10 @@ def get_user_by_username(db: Session, username: str):
 
 def create_user(db: Session, user: schemas.UserCreate):
     hashed_password = user.password + "insert hashing here"
-    db_user = models.User(username=user.username, hashed_password=hashed_password)
+    db_user = models.User(
+        **user.model_dump(exclude={'password'}),
+        hashed_password=hashed_password
+    )
     db.add(db_user)
     db.commit()
     db.refresh(db_user)

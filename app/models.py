@@ -1,7 +1,7 @@
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Date, Float
 from sqlalchemy.orm import relationship
 
-from .database import Base
+from app.database import Base
 
 
 class User(Base):
@@ -9,7 +9,8 @@ class User(Base):
 
     id = Column(Integer, primary_key=True)
     username = Column(String, unique=True, index=True)
-    department = Column(String, index=True)   
+    department = Column(String, index=True)
+    role = Column(String, nullable=False)
     hashed_password = Column(String)
 
     bookings = relationship("Booking", back_populates="owner")
