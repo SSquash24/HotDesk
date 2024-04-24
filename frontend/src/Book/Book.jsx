@@ -76,8 +76,8 @@ function Book() {
 
 
     return (
-        <div className="Book:">
-            <h1>Booking Page</h1>
+        <div className="Book">
+            <h1>Booking Page:</h1>
             <div className="mainContents">
                 <div className='bookCalendar'><Calendar onClick={handleCalendarClick} alertToday={doInit} /></div>
                 <div className="bookingForm">
