@@ -34,8 +34,3 @@
     width: 125px;
 }
 
-.centered {
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-}

@@ -68,7 +68,7 @@ function NewAcc () {
                         <input type="text" id="dptInput"></input>
                     </div> <div />
                 </div>
-                <div className="centered">
+                <div className="vertCentered">
                     <button id="createButton" onClick={handleClick}>Create</button>
                 </div>
             </div>

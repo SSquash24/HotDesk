@@ -13,10 +13,16 @@ function ChangePassword() {
 
 
     return (
-      <div className='changePw'>
-        <h3>Change Password:</h3>
-        <input id='pwInput' type='text' />
-        <button onClick={handleClick}>Change</button>
+      <div>
+        <div className='changePw sideBySide'>
+          <div className='sideBySide'>
+            <p className='padded'>Change Password:</p>
+            <input id='pwInput' type='text' />
+          </div>
+          <div className='centered'>
+            <button id="changeButton" onClick={handleClick}>Change</button>
+          </div>
+        </div>
       </div>
     )
 }
@@ -32,8 +38,13 @@ function Logout() {
 
     return (
       <div className='Account'>
-        <ChangePassword />
-        <button className='logoutButton' onClick={handleClick}>Logout</button>
+        <h1>Account:</h1>
+        <div>
+          <ChangePassword />
+          <div className='centered'>
+            <button id='logoutButton' onClick={handleClick}>Logout</button>
+          </div>
+        </div>
       </div>
     );
   }

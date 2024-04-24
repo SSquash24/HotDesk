@@ -5,18 +5,9 @@
   height: 90vh;
 }
 
-.UInfo {
-  margin: 2%;
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: 1fr;
-  gap:10%;
-}
 
-.sideBySide {
-  align-items: center;
-  display: inline-flex;
-}
+
+
 
 .bookingsContent {
   margin: 2%;
