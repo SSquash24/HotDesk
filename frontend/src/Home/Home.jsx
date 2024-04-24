@@ -1,7 +1,7 @@
 import { useState, useContext } from 'react';
 import { TokenContext } from '../Navigator/Navigator';
 import Calendar from '../calendar/Calendar';
-
+import './home.css'
 
 function UserInfo(props) {
 

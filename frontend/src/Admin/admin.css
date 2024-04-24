@@ -1,0 +1,41 @@
+.Admin {
+    align-content: center;
+    align-items: center;
+    width: 95%;
+    height: 90vh;
+    max-width: 1000px;
+    background-color: white;
+}
+
+.newAcc {
+    text-align: center;
+}
+
+.newAccBody {
+    margin: 2%;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    gap: 10%;
+}
+
+.form {
+    text-align: left;
+    justify-self: center;
+}
+
+.padded {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+#createButton {
+    margin: 5%;
+    width: 125px;
+}
+
+.centered {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}

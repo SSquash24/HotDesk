@@ -20,6 +20,7 @@ import {
   } from "react-router-dom";
 
 import usePersistState from '../usePersistState';
+import Admin from '../Admin/Admin';
 
 export const TokenContext = createContext(null)
 
@@ -100,6 +101,7 @@ function Navigator(props) {
                 <Route exact path="/" element={<Home uInfo={state.uInfo}/>} />
                 <Route exact path="/book" element={<Book />} />
                 <Route exact path="/account" element={<Account />} />
+                {state.uInfo.role === "admin" && <Route exact path="/admin" element={<Admin />} />}
                 <Route path='*' element={<Navigate to="/" />}/>
             </>
     }
@@ -110,6 +112,7 @@ function Navigator(props) {
             {state.validated && <nav className='navbar'>
                 <NavLink to='/'>Home</NavLink>
                 <NavLink to='/book'>Book</NavLink>
+                {state.uInfo.role === "admin" && <NavLink to='/admin'>Admin</NavLink>}
                 <NavLink to='/account'>Account</NavLink>
             </nav>}
 
