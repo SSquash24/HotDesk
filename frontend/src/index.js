@@ -8,8 +8,8 @@ import Navigator from './Navigator/Navigator'
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
-  <React.StrictMode>
-    <Navigator />
-  </React.StrictMode>
+    <React.StrictMode>
+        <Navigator />
+    </React.StrictMode>
 );
 

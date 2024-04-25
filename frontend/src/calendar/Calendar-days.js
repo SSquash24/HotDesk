@@ -44,9 +44,9 @@ function CalendarDays(props) {
                 currentDays.map((day) => {
                     return (
                         <div key={day.date.toDateString()} className={'calendar-day' + (day.currentMonth ? " current" : "")
-                        + (day.selected ? " selected" : "")}
-                        onClick={() => props.changeCurrentDay(day)}>
-                            <span className={"calendar-span" + (day.isToday ? " today" : "") + (day.isBooked ? " booked": "")}>
+                            + (day.selected ? " selected" : "")}
+                            onClick={() => props.changeCurrentDay(day)}>
+                            <span className={"calendar-span" + (day.isToday ? " today" : "") + (day.isBooked ? " booked" : "")}>
                                 <p>{day.number}</p>
                             </span>
                         </div>

@@ -17,7 +17,7 @@ import {
     Route,
     NavLink,
     Navigate,
-  } from "react-router-dom";
+} from "react-router-dom";
 
 import usePersistState from '../usePersistState';
 import Admin from '../Admin/Admin';
@@ -71,8 +71,7 @@ function Navigator(props) {
         }).catch((err) => {
             alert("Failed to connect to server")
             setValidation(false)
-            if (state.validated)
-            {
+            if (state.validated) {
                 changeState({
                     uInfo: null,
                     token: state.token,
@@ -80,7 +79,7 @@ function Navigator(props) {
                 })
             }
         })
-            
+
     }
 
 
@@ -88,22 +87,22 @@ function Navigator(props) {
         if (tryValidation) authorize() //attempt to authorize, if successfull a refresh will occur
     })
 
-    
+
 
     let pages; //pages will exist or not based on whether user is validated
     if (!state.validated) {
         pages = <>
-                <Route path="/login" element={<Login />} />
-                <Route path='*' element={<Navigate to="/login" />}/>
-            </>
+            <Route path="/login" element={<Login />} />
+            <Route path='*' element={<Navigate to="/login" />} />
+        </>
     } else {
         pages = <>
-                <Route exact path="/" element={<Home uInfo={state.uInfo}/>} />
-                <Route exact path="/book" element={<Book />} />
-                <Route exact path="/account" element={<Account />} />
-                {state.uInfo.role === "admin" && <Route exact path="/admin" element={<Admin />} />}
-                <Route path='*' element={<Navigate to="/" />}/>
-            </>
+            <Route exact path="/" element={<Home uInfo={state.uInfo} />} />
+            <Route exact path="/book" element={<Book />} />
+            <Route exact path="/account" element={<Account />} />
+            {state.uInfo.role === "admin" && <Route exact path="/admin" element={<Admin />} />}
+            <Route path='*' element={<Navigate to="/" />} />
+        </>
     }
 
     return (
@@ -124,7 +123,7 @@ function Navigator(props) {
                 </TokenContext.Provider>
             </div>
         </Router>
-    
+
     )
 }
 

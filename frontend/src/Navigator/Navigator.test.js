@@ -45,9 +45,9 @@ describe('NavigatorComponent', () => {
     test('redirects to / if GET /users/me request is accepted', async () => {
         fetch.mockResponse(JSON.stringify({ username: 'testUser' }))
         render(<Navigator />);
-    
+
         await waitFor(() => {
-          expect(screen.getByText('Home Page:')).toBeInTheDocument();
+            expect(screen.getByText('Home Page:')).toBeInTheDocument();
         });
     });
 
@@ -60,7 +60,7 @@ describe('NavigatorComponent', () => {
             expect(screen.getAllByText('Book')[0]).toBeInTheDocument();
             expect(screen.getAllByText('Account')[0]).toBeInTheDocument();
         })
-        
+
     })
 
 })

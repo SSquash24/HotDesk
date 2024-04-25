@@ -1,8 +1,8 @@
 .App {
-  background: #ffffff;
-  max-width: 1000px;
-  width: 95%;
-  height: 90vh;
+    background: #ffffff;
+    max-width: 1000px;
+    width: 95%;
+    height: 90vh;
 }
 
 
@@ -10,22 +10,22 @@
 
 
 .bookingsContent {
-  margin: 2%;
-  text-align: justify;
+    margin: 2%;
+    text-align: justify;
 }
 
 .bookingsContent:after {
-  display: inline-block;
-  width: 100%;
+    display: inline-block;
+    width: 100%;
 }
 
 .bookingsChild {
-  padding-left: 5%;
-  padding-right: 5%;
-  padding-bottom: 10%;
-  display: inline-block;
+    padding-left: 5%;
+    padding-right: 5%;
+    padding-bottom: 10%;
+    display: inline-block;
 }
 
 .profileCalendar {
-  width: 40%;
+    width: 40%;
 }

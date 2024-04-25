@@ -53,7 +53,7 @@ function Calendar(props) {
         handleClick(day);
     }
 
-    const lastMonth = ()  => {
+    const lastMonth = () => {
         if (currentDay.getMonth() === 0) {
             setCurrentDay(new Date(currentDay.getFullYear() - 1, 11, 31))
         } else {

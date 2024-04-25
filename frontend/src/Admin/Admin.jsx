@@ -2,16 +2,16 @@ import { useContext } from "react"
 import { TokenContext } from "../Navigator/Navigator"
 import "./admin.css"
 
-function NewAcc () {
+function NewAcc() {
 
     const { token } = useContext(TokenContext)
 
-    function handleClick () {
+    function handleClick() {
         let uname = document.getElementById("unameInput").value
         let pw = document.getElementById("pwInput").value
         let dpt = document.getElementById("dptInput").value
         let role = document.getElementById("roleInput").value
-        
+
         fetch(global.config.api_path + "users/", {
             method: "POST",
             headers: {
@@ -37,7 +37,7 @@ function NewAcc () {
                     alert(`Error: ${json.detail[0].msg}`)
                 }
             }
-        }).catch( (err) => {
+        }).catch((err) => {
             alert("Error: failed to connect to server")
         })
 
@@ -76,7 +76,7 @@ function NewAcc () {
     )
 }
 
-function Admin () {
+function Admin() {
 
     return (
         <div className="Admin">
