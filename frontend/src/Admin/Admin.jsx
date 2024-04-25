@@ -1,10 +1,24 @@
-import { useContext } from "react"
+import { useContext, useEffect } from "react"
 import { TokenContext } from "../Navigator/Navigator"
 import "./admin.css"
 
 function NewAcc() {
 
     const { token } = useContext(TokenContext)
+
+    function updateButton() {
+
+        let button = document.getElementById("createButton");
+        if (document.getElementById("unameInput").value !== ""
+            && document.getElementById("pwInput").value !== ""
+            && document.getElementById("dptInput").value !== "") {
+            button.disabled = false;
+        }
+        else {
+            button.disabled = true;
+        }
+
+    }
 
     function handleClick() {
         let uname = document.getElementById("unameInput").value
@@ -43,6 +57,11 @@ function NewAcc() {
 
     }
 
+    useEffect(() => {
+        updateButton();
+    })
+
+
     return (
         <div className="newAcc">
             <h3>Add new account:</h3>
@@ -50,11 +69,11 @@ function NewAcc() {
                 <div className="form">
                     <div className="sideBySide">
                         <p className="padded">Username:</p>
-                        <input type="text" id="unameInput"></input>
+                        <input type="text" id="unameInput" onInput={updateButton}></input>
                     </div> <div />
                     <div className="sideBySide">
                         <p className="padded">Password:</p>
-                        <input type="text" id="pwInput"></input>
+                        <input type="text" id="pwInput" onInput={updateButton}></input>
                     </div> <div />
                     <div className="sideBySide">
                         <p className="padded">Role:</p>
@@ -65,11 +84,11 @@ function NewAcc() {
                     </div> <div />
                     <div className="sideBySide">
                         <p className="padded">Department:</p>
-                        <input type="text" id="dptInput"></input>
+                        <input type="text" id="dptInput" onInput={updateButton} ></input>
                     </div> <div />
                 </div>
                 <div className="vertCentered">
-                    <button id="createButton" onClick={handleClick}>Create</button>
+                    <button id="createButton" data-testid="create-button" onClick={handleClick}>Create</button>
                 </div>
             </div>
         </div>
