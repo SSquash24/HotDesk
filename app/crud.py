@@ -39,6 +39,14 @@ def create_user(db: Session, user: schemas.UserCreate):
     db.refresh(db_user)
     return db_user
 
+def update_password(db: Session, uid: int, password: str):
+    hashed_password = password + "insert hashing here"
+    user = get_user(db, uid)
+    user.hashed_password = hashed_password
+    db.commit()
+    db.refresh(user)
+    return user
+
 def get_booking(db: Session, bid: int): 
     """ gets booking by id or throws NoResultFound exception if none match
     """

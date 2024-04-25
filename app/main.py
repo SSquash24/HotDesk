@@ -36,6 +36,13 @@ CREDENTIALS_EXCEPTION = HTTPException(
     headers={"WWW-Authenticate": "Bearer"},
 )
 
+ADMIN_USER_SCHEMA = schemas.UserCreate(
+    username="Admin",
+    department=None,
+    role="admin",
+    password="password"
+)
+
 app = FastAPI()
 
 
@@ -76,7 +83,7 @@ def create_dummy(db):
         
     
 # testing purposes --- clears database
-def clear_db(db):
+def reset_db(db):
     db.query(models.User).delete()
     db.query(models.Booking).delete()
     db.query(models.Seat).delete()
@@ -206,11 +213,33 @@ async def login_for_access_token(
     return schemas.Token(access_token=access_token, token_type="bearer")
 
 # testing purposes --- clears and initializes database with the dummy database
-@app.post("/setup")
-async def init(db = Depends(get_db)):
-    clear_db(db)
+@app.post("/reset/all")
+async def reset(db = Depends(get_db)):
+    reset_db(db)
+    crud.create_user(db, ADMIN_USER_SCHEMA)
+    return "Database reset to empty state"
+
+@app.post("/reset/init")
+async def initialise_dummy(db = Depends(get_db)):
+    reset_db(db)
     create_dummy(db)
-    return "cleared and initialized database"
+    return "Database initialised with dummy values"
+
+@app.post("/reset/all", dependencies=[Depends(verify_admin)])
+async def reset(db = Depends(get_db)):
+    reset_db(db)
+    crud.create_user(db, ADMIN_USER_SCHEMA)
+    return "Database reset to empty state"
+
+
+@app.post("/reset/password")
+async def change_password(
+    user: Annotated[schemas.User, Depends(get_current_user)],
+    password: str,
+    db = Depends(get_db)
+):
+    return crud.update_password(db, user.id, password)
+
 
 @app.post("/bookings/book", response_model=schemas.Booking)
 async def book(
