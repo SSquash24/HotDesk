@@ -10,12 +10,11 @@ The frontend now communicates with the api, so if you are running it, you will n
 > [!NOTE]
 > If npm lists security vulnerabilities, thats currently expected (the vulnerabilities should dissapear in the production server)
 
-## starting the frontend
+## Starting the frontend
 
-1. Start the server in development mode with `npm start` in the frontend folder
-2. Create a production build with `npm run build`. You can then run the production build with `serve -s build` (You may need to install serve)
+  Start the server in development mode with `npm start` in the frontend folder
 
-## testing
+## Testing
 
 1. To run all current tests run `npm test` in the frontend folder. They should currently all pass
 2. To add new tests, write them in a new or existing _.test.js file.
@@ -25,3 +24,11 @@ The frontend now communicates with the api, so if you are running it, you will n
 > This comes from setting up mock responses to the api calls, and I have not been able to remove them.
 > The tests still all run correctly.
 > To hide these warnings, you can run `npm test -- --silent` instead
+
+## Deployment
+
+1. Create a production build with `npm run build` (in the frontend folder).
+2. Run this build with `serve -s build`
+
+> [!IMPORTANT]
+> By default, the server's api path is set to `localhost:8000`, so only the device that is running the server can see the frontend correctly. You may wish to fix this by setting `path` to the server's ip address in config.js.
