@@ -7,6 +7,7 @@ function CalendarDays(props) {
 
 
     let bookedDays = [...props.booked]
+    bookedDays = bookedDays.sort((a,b) => a-b) //sort dates
 
     for (let day = 0; day < 42; day++) {
         if (day === 0 && weekdayOfFirstDay === 0) {
@@ -43,10 +44,10 @@ function CalendarDays(props) {
             {
                 currentDays.map((day) => {
                     return (
-                        <div key={day.date.toDateString()} className={'calendar-day' + (day.currentMonth ? " current" : "")
-                        + (day.selected ? " selected" : "")}
-                        onClick={() => props.changeCurrentDay(day)}>
-                            <span className={"calendar-span" + (day.isToday ? " today" : "") + (day.isBooked ? " booked": "")}>
+                        <div key={day.date.toDateString()} id={day.date.toDateString()} className={'calendar-day' + (day.currentMonth ? " current" : "")
+                            + (day.selected ? " selected" : "")}
+                            onClick={() => props.changeCurrentDay(day)}>
+                            <span className={"calendar-span" + (day.isToday ? " today" : "") + (day.isBooked ? " booked" : "")}>
                                 <p>{day.number}</p>
                             </span>
                         </div>

@@ -45,11 +45,22 @@ describe('NavigatorComponent', () => {
     test('redirects to / if GET /users/me request is accepted', async () => {
         fetch.mockResponse(JSON.stringify({ username: 'testUser' }))
         render(<Navigator />);
-    
+
         await waitFor(() => {
-          expect(screen.getAllByText('Profile')[0]).toBeInTheDocument();
+            expect(screen.getByText('Home Page:')).toBeInTheDocument();
         });
     });
 
+    test('has navbar component (when request accepted)', async () => {
+        fetch.mockResponse(JSON.stringify({ username: 'testUser' }))
+        render(<Navigator />)
+
+        await waitFor(() => {
+            expect(screen.getAllByText('Home')[0]).toBeInTheDocument();
+            expect(screen.getAllByText('Book')[0]).toBeInTheDocument();
+            expect(screen.getAllByText('Account')[0]).toBeInTheDocument();
+        })
+
+    })
 
 })

@@ -1,8 +1,8 @@
-import Profile from '../Profile/Profile';
+import Home from '../Home/Home';
 import Book from '../Book/Book'
-import Logout from '../Logout/Logout'
+import Account from '../Account/Account'
 import Login from '../Login/Login'
-import './Navigator.css'
+import './navigator.css'
 
 
 import {
@@ -17,9 +17,10 @@ import {
     Route,
     NavLink,
     Navigate,
-  } from "react-router-dom";
+} from "react-router-dom";
 
 import usePersistState from '../usePersistState';
+import Admin from '../Admin/Admin';
 
 export const TokenContext = createContext(null)
 
@@ -70,8 +71,7 @@ function Navigator(props) {
         }).catch((err) => {
             alert("Failed to connect to server")
             setValidation(false)
-            if (state.validated)
-            {
+            if (state.validated) {
                 changeState({
                     uInfo: null,
                     token: state.token,
@@ -79,7 +79,7 @@ function Navigator(props) {
                 })
             }
         })
-            
+
     }
 
 
@@ -87,30 +87,32 @@ function Navigator(props) {
         if (tryValidation) authorize() //attempt to authorize, if successfull a refresh will occur
     })
 
-    
+
 
     let pages; //pages will exist or not based on whether user is validated
     if (!state.validated) {
         pages = <>
-                <Route path="/login" element={<Login />} />
-                <Route path='*' element={<Navigate to="/login" />}/>
-            </>
+            <Route path="/login" element={<Login />} />
+            <Route path='*' element={<Navigate to="/login" />} />
+        </>
     } else {
         pages = <>
-                <Route exact path="/" element={<Profile uInfo={state.uInfo}/>} />
-                <Route exact path="/book" element={<Book />} />
-                <Route exact path="/logout" element={<Logout />} />
-                <Route path='*' element={<Navigate to="/" />}/>
-            </>
+            <Route exact path="/" element={<Home uInfo={state.uInfo} />} />
+            <Route exact path="/book" element={<Book />} />
+            <Route exact path="/account" element={<Account />} />
+            {state.uInfo.role === "admin" && <Route exact path="/admin" element={<Admin />} />}
+            <Route path='*' element={<Navigate to="/" />} />
+        </>
     }
 
     return (
         <Router props>
 
             {state.validated && <nav className='navbar'>
-                <NavLink to='/'>Profile</NavLink>
+                <NavLink to='/'>Home</NavLink>
                 <NavLink to='/book'>Book</NavLink>
-                <NavLink to='/logout'>Logout</NavLink>
+                {state.uInfo.role === "admin" && <NavLink to='/admin'>Admin</NavLink>}
+                <NavLink to='/account'>Account</NavLink>
             </nav>}
 
             <div className='main'>
@@ -121,7 +123,7 @@ function Navigator(props) {
                 </TokenContext.Provider>
             </div>
         </Router>
-    
+
     )
 }
 

@@ -1,0 +1,35 @@
+.Account {
+    width: 95%;
+    height: 90vh;
+    max-width: 1000px;
+    background-color: white;
+}
+
+.changePw {
+    text-align: right;
+    padding-left: 5%;
+    padding-right: 5%;
+    padding-top: 5vb;
+    padding-bottom: 5vb;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    gap: 10%;
+}
+
+.left {
+    text-align: left;
+}
+
+#changeButton {
+    width: 125px;
+}
+
+
+#logoutButton {
+    font-size: x-large;
+    margin-top: 10vb;
+    padding: 10px;
+    width: 150px;
+    justify-self: center;
+}

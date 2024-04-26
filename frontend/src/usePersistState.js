@@ -4,7 +4,7 @@ import { useMemo } from "react";
 export default function usePersistState(initial_value, id) {
     //set init value
     const _initial_value = useMemo(() => {
-        const local_storage_value_str = localStorage.getItem('state:'+id);
+        const local_storage_value_str = localStorage.getItem('state:' + id);
         // if there is a value stored, use that
         if (local_storage_value_str) {
             return JSON.parse(local_storage_value_str);
