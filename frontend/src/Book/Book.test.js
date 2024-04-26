@@ -60,7 +60,7 @@ describe('BookPage', () => {
 
         await waitFor(() => {
             expect(fetch).toHaveBeenCalledWith(
-                global.config.api_path + 'bookings/book', {
+                global.config.api_book, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

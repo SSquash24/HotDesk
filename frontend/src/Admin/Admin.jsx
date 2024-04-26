@@ -26,7 +26,7 @@ function NewAcc() {
         let dpt = document.getElementById("dptInput").value
         let role = document.getElementById("roleInput").value
 
-        fetch(global.config.api_path + "users/", {
+        fetch(global.config.api_createUser, {
             method: "POST",
             headers: {
                 "accept": "application/json",

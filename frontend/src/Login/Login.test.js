@@ -37,7 +37,7 @@ describe('LoginPage', () => {
 
         await waitFor(() => {
             expect(fetch).toHaveBeenCalledWith(
-                global.config.api_path + 'login', {
+                global.config.api_login, {
                 method: 'POST',
                 headers: {
                     "Content-type": "application/x-www-form-urlencoded",

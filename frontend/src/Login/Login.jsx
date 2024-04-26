@@ -20,7 +20,7 @@ function Login(props) {
         }
         formBody = formBody.join("&");
 
-        fetch(global.config.api_path + 'login', {
+        fetch(global.config.api_login, {
             method: 'POST',
             headers: {
                 "Content-type": "application/x-www-form-urlencoded",

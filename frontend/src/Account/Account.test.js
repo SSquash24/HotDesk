@@ -48,7 +48,7 @@ describe('LogoutPage', () => {
 
         await waitFor(() => {
             expect(fetch).toHaveBeenCalledWith(
-                global.config.api_path + "reset/password?password=testPassword", {
+                global.config.api_changePassword + "?password=testPassword", {
                 method: "POST",
                 headers: {
                     "Authorization": "test",

@@ -19,7 +19,7 @@ function Book() {
         if (day.isBooked || lcldate <= new Date()) {
             setSeats('-')
         } else {
-            fetch(global.config.api_path + "bookings/vacancies?date="
+            fetch(global.config.api_vacancies + "?date="
                 + String(day.year).padStart(4, '0')
                 + '-' + String(day.month + 1).padStart(2, '0')
                 + '-' + String(day.number).padStart(2, '0')
@@ -51,7 +51,7 @@ function Book() {
     };
 
     const handleBookClick = () => {
-        fetch(global.config.api_path + "bookings/book", {
+        fetch(global.config.api_book, {
             method: "POST",
             headers: {
                 'Authorization': token,

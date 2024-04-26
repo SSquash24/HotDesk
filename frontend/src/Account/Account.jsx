@@ -11,7 +11,7 @@ function ChangePassword() {
     function handleClick() {
         let newPW = document.getElementById('pwInput').value
         if (window.confirm("Are you sure you want to change your password to '" + newPW + "' ?")) {
-            fetch(global.config.api_path + "reset/password?password=" + newPW, {
+            fetch(global.config.api_changePassword +  "?password=" + newPW, {
                 method: "POST",
                 headers: {
                     "Authorization": token,

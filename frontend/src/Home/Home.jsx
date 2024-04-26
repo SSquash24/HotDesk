@@ -9,7 +9,7 @@ function UserInfo(props) {
     const [seat, setSeat] = useState({ value: "loading...", toGet: true })
 
     if (seat.toGet) {
-        fetch(global.config.api_path + "bookings/today", {
+        fetch(global.config.api_todaysBook, {
             method: "GET",
             headers: {
                 "accept": "application/json",

@@ -45,7 +45,7 @@ describe("Admin page", () => {
 
         await waitFor(() => {
             expect(fetch).toHaveBeenCalledWith(
-                global.config.api_path + "users/", {
+                global.config.api_createUser, {
                 method: "POST",
                 headers: {
                     "Authorization": "test",
