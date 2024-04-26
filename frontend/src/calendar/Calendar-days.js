@@ -7,6 +7,7 @@ function CalendarDays(props) {
 
 
     let bookedDays = [...props.booked]
+    bookedDays = bookedDays.sort((a,b) => a-b) //sort dates
 
     for (let day = 0; day < 42; day++) {
         if (day === 0 && weekdayOfFirstDay === 0) {

@@ -1,6 +1,4 @@
 .Admin {
-    align-content: center;
-    align-items: center;
     width: 95%;
     height: 90vh;
     max-width: 1000px;
@@ -13,20 +11,35 @@
 
 .newAccBody {
     margin: 2%;
-    display: grid;
+    /* text-align: justify; */
+    /* display: grid;
     grid-auto-flow: column;
     grid-auto-columns: 1fr;
-    gap: 10%;
+    gap: 10%; */
+}
+
+.newAccBody::after {
+    display: inline-block;
+    width: 100%;
 }
 
 .form {
+    display: inline-block;
     text-align: left;
     justify-self: center;
+    min-width: 40%;
+    vertical-align: top;
 }
 
 .padded {
     padding-left: 10px;
     padding-right: 10px;
+}
+
+.buttonContainer {
+    display: inline-block;
+    min-width: 40%;
+    vertical-align: top;
 }
 
 #createButton {

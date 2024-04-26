@@ -42,7 +42,7 @@ function NewAcc() {
         }).then(async (response) => {
             let json = await response.json()
             if (response.ok) {
-                alert(`Successful account creation for ${json.username}!\n\npassword: ${json.password}\ndepartment: ${json.department}\nrole: ${json.role}`)
+                alert(`Successful account creation for ${json.username}!\n\npassword: ${pw}\ndepartment: ${json.department}\nrole: ${json.role}`)
             }
             else {
                 if (json.detail[0].msg === undefined) {
@@ -87,7 +87,7 @@ function NewAcc() {
                         <input type="text" id="dptInput" onInput={updateButton} ></input>
                     </div> <div />
                 </div>
-                <div className="vertCentered">
+                <div className="buttonContainer">
                     <button id="createButton" data-testid="create-button" onClick={handleClick}>Create</button>
                 </div>
             </div>
