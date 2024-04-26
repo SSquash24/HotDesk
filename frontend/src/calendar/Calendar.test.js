@@ -58,7 +58,7 @@ describe('Cal API', () => {
         );
 
         await waitFor(() => {
-            expect(fetch).toHaveBeenCalledWith('http://127.0.0.1:8000/bookings/me', {
+            expect(fetch).toHaveBeenCalledWith(global.config.api_path + 'bookings/me', {
                 method: "GET",
                 headers: {
                     'Authorization': 'test',
