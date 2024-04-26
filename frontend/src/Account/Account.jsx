@@ -38,11 +38,11 @@ function ChangePassword() {
     return (
         <div>
             <div className='changePw sideBySide'>
-                <div className='sideBySide'>
-                    <p className='padded'>Change Password:</p>
-                    <input id='pwInput' type='text' />
+                <div>
+                    <h3 className='right'>Change Password:</h3>
+                    <input id='pwInput' className='right' type='text' />
                 </div>
-                <div className='centered'>
+                <div className='left vertCentered'>
                     <button id="changeButton" onClick={handleClick}>Change</button>
                 </div>
             </div>

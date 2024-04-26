@@ -1,7 +1,4 @@
 .Account {
-    /* display: grid; */
-    align-content: center;
-    justify-content: center;
     width: 95%;
     height: 90vh;
     max-width: 1000px;
@@ -9,6 +6,7 @@
 }
 
 .changePw {
+    text-align: right;
     padding-left: 5%;
     padding-right: 5%;
     padding-top: 5vb;
@@ -19,9 +17,14 @@
     gap: 10%;
 }
 
+.left {
+    text-align: left;
+}
+
 #changeButton {
     width: 125px;
 }
+
 
 #logoutButton {
     font-size: x-large;
