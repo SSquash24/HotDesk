@@ -1,25 +1,10 @@
-import { render, waitFor, screen, fireEvent } from '@testing-library/react';
+import { render, waitFor, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event'
 import Login from './Login';
 import { TokenContext } from '../Navigator/Navigator';
 import '../config';
 import fetchMock from 'jest-fetch-mock';
 
-// describe('LogoutPage', () => {
-
-//     beforeEach(() => {
-//         const setToken = jest.fn()
-//         render(
-//             <TokenContext.Provider value={{ token: "test", setToken: setToken }}>
-//                 <Login />
-//             </TokenContext.Provider>
-//         )
-//         expect(setToken).toHaveBeenCalledTimes(0)
-//     })
-
-//     test('renders without crashing', () => {
-//     });
-
-// })
 
 describe('LoginPage', () => {
     let setToken;
@@ -44,11 +29,11 @@ describe('LoginPage', () => {
     test('login button makes a POST request to /login with username and password', async () => {
         const usernameInput = document.getElementById('unameInput');
         const passwordInput = document.getElementById('pwInput');
-        const loginButton = screen.getByTestId('login-button');
+        const loginButton = screen.getByText('Login');
 
-        fireEvent.change(usernameInput, { target: { value: 'testUser' } });
-        fireEvent.change(passwordInput, { target: { value: 'testPassword' } });
-        fireEvent.click(loginButton);
+        userEvent.type(usernameInput, 'testUser');
+        userEvent.type(passwordInput, 'testPassword');
+        userEvent.click(loginButton);
 
         await waitFor(() => {
             expect(fetch).toHaveBeenCalledWith(

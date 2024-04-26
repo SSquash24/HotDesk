@@ -1,5 +1,6 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import Book from './Book';
+import userEvent from '@testing-library/user-event'
 import { TokenContext } from '../Navigator/Navigator';
 import '../config';
 import fetchMock from 'jest-fetch-mock';
@@ -12,6 +13,8 @@ describe('BookPage', () => {
         fetchMock.enableMocks();
         fetchMock.doMock();
         fetch.resetMocks()
+
+        fetch.mockResponse(JSON.stringify(2)) // so there are 2 free seats, the book button is enabled
 
         render(
             <TokenContext.Provider value={{ token: "test", setToken: setToken }}>
@@ -38,37 +41,40 @@ describe('BookPage', () => {
         let testDate = '15'
         if (testDate === today.getDate()) testDate = '16'
         const toClick = screen.getByText(testDate);
-        fireEvent.click(toClick)
+        userEvent.click(toClick)
         today.setDate(testDate)
         await waitFor(() => {
             expect(screen.getByText('Date: ' + today.toDateString())).toBeInTheDocument();
         })
     })
 
-    // test('book button sends valid fetch request', async () => {
-    //   const bookButton = screen.getByTestId('book-button');
-    //   fireEvent.click(bookButton);
+    test('book button sends valid fetch request', async () => {
+        const date = new Date();
+        const bookButton = screen.getByTestId('book-button');
 
-    //   const date = new Date();
+        await waitFor(() => {
+            expect(bookButton).toBeEnabled()
+        })
+        userEvent.click(bookButton);
 
-    //   await waitFor(() => {
-    //       expect(fetch).toHaveBeenCalledWith(
-    //           global.config.api_path + 'bookings/book', {
-    //               method: 'GET',
-    //               headers: {
-    //                   'Content-Type': 'application/json',
-    //                   "Authorization": "test"
-    //               },
-    //               body: JSON.stringify({
-    //                 "date": String(date.getFullYear()).padStart(4, '0')
-    //                         + '-' + String(date.getMonth()+1).padStart(2, '0')
-    //                         + '-' + String(date.getDate()).padStart(2, '0')
-    //             })
-    //           }
-    //       );
-    //       expect(setToken).toHaveBeenCalledWith('bearer testToken');
-    //   });
-    // })
+
+        await waitFor(() => {
+            expect(fetch).toHaveBeenCalledWith(
+                global.config.api_path + 'bookings/book', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    "Authorization": "test"
+                },
+                body: JSON.stringify({
+                    "date": String(date.getFullYear()).padStart(4, '0')
+                        + '-' + String(date.getMonth() + 1).padStart(2, '0')
+                        + '-' + String(date.getDate()).padStart(2, '0')
+                })
+            }
+            );
+        });
+    })
 
 
 })

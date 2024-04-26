@@ -40,13 +40,19 @@ function Login(props) {
 
     return (
         <div className="Login">
-            <h1>Login</h1>
+            <h1>Login:</h1>
             <div className="form">
-                <h3>Username:</h3>
-                <input id="unameInput"></input>
-                <h3>Password:</h3>
-                <input id="pwInput"></input>
-                <button onClick={handleButton} data-testid="login-button">Login</button>
+                <div className="sideBySide">
+                    <h3>Username:</h3>
+                    <input id="unameInput"></input>
+                </div><br />
+                <div className="sideBySide">
+                    <h3>Password:</h3>
+                    <input id="pwInput"></input>
+                </div><br />
+                <div className="centered">
+                    <button onClick={handleButton} className="loginButton">Login</button>
+                </div>
             </div>
         </div>
     );

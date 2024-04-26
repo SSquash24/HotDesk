@@ -5,10 +5,6 @@ import fetchMock from 'jest-fetch-mock';
 import '../config'
 
 
-beforeEach(() => {
-
-});
-
 describe('Calendar', () => {
 
     beforeEach(() => {
@@ -47,9 +43,10 @@ describe('Cal API', () => {
 
     test('sends GET request to bookings/me and shows current bookings when logged in', async () => {
         const setToken = jest.fn();
+        const today = new Date();
         const mockResponse = [
-            { date: '2022-12-01', seat: 'A1' },
-            { date: '2022-12-02', seat: 'B2' },
+            { date: new Date(today.getFullYear(), today.getMonth(), 14), seat: 'A1' },
+            { date: new Date(today.getFullYear(), today.getMonth(), 16), seat: 'B2' },
         ];
 
         fetch.mockResponseOnce(JSON.stringify(mockResponse));
@@ -69,8 +66,11 @@ describe('Cal API', () => {
             });
         })
 
-        // mockResponse.forEach(booking => {
-        //   expect(screen.getByText(new Date(booking.date).toDateString())).toBeInTheDocument();
-        // });
+        await waitFor(() => {
+            mockResponse.forEach(booking => {
+                expect(screen.getByText(booking.date.getDate()).closest("span")).toHaveClass("booked")
+            });
+        })
+        
     });
 })
