@@ -112,6 +112,14 @@ def update_booking_with_seat(db: Session, bid: int, sid: int):
     db.refresh(booking)
     return booking
 
+def create_seat(db: Session, name: str, x: int, y: int, id: int):
+    db_seat = models.Seat(name=name, x=x, y=y, id=id)
+
+    db.add(db_seat)
+    db.commit()
+    db.refresh(db_seat)
+    return db_seat
+
 def get_seat(db: Session, sid: int):
     return db.scalars(
         select(models.Seat).where(models.Seat.id == sid)

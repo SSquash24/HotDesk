@@ -41,6 +41,7 @@ def reset_db(db):
     db.query(models.User).delete()
     db.query(models.Booking).delete()
     db.query(models.Seat).delete()
+    db.commit()
 
 
 # testing purposes --- clears and initializes database with the dummy database

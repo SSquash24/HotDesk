@@ -20,14 +20,19 @@ CREDENTIALS_EXCEPTION = HTTPException(
     headers={"WWW-Authenticate": "Bearer"},
 )
 
+class ContextManager:
+    def __init__(self):
+        self.db = SessionLocal()
 
-def get_db():
-    # return dummy_db
-    db = SessionLocal()
-    try:
+    def __enter__(self):
+        return self.db
+
+    def __exit__(self, exc_type, exc_value, traceback):
+        self.db.close()
+
+async def get_db():
+    with ContextManager() as db:
         yield db
-    finally:
-        db.close()
 
 def verify_token(token: Annotated[str, Depends(oauth2_scheme)]):
     try:
