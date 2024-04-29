@@ -3,7 +3,8 @@
 from datetime import date
 from typing import Annotated, Optional
 
-from pydantic import AfterValidator, BaseModel, Field, FutureDate
+from numpy import format_float_positional
+from pydantic import AfterValidator, BaseModel, Field, FilePath, FutureDate
 
 def check_date_in_future(v: date):
     assert date.today() <= v, "Date should be in the future"
@@ -47,14 +48,26 @@ class SeatBase(BaseModel):
     name: str
     x: float
     y: float
-
+    plan_id: int
 class Seat(SeatBase):
     id: int
-
+    
     class Config:
         from_attributes = True
 
 class SeatCreate(SeatBase):
+    pass
+
+class PlanBase(BaseModel):
+    name: str
+    path: FilePath
+
+class Plan(PlanBase):
+    id: int
+    class Config:
+        from_attributes = True
+
+class PlanCreate(PlanBase):
     pass
 
 # other models:
