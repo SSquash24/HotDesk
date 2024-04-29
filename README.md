@@ -17,6 +17,7 @@ Mostly adapted from the [FastAPI SQL](https://fastapi.tiangolo.com/tutorial/sql-
 
 ## Scripts
 
+- `python -m scripts.workspace` to add a seating plan to the database
 - `python -m scripts.init_db` to initialise the database with just the admin user.
 
 

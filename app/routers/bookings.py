@@ -75,7 +75,7 @@ async def book(
     return crud.create_booking(db, booking, user.id)
 
 @router.delete("/me/delete")
-async def delete(
+async def delete_booking(
     d: date, 
     user: Annotated[schemas.User, Depends(get_current_user)], 
     db = Depends(get_db)

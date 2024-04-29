@@ -112,8 +112,8 @@ def update_booking_with_seat(db: Session, bid: int, sid: int):
     db.refresh(booking)
     return booking
 
-def create_seat(db: Session, name: str, x: int, y: int, id: int):
-    db_seat = models.Seat(name=name, x=x, y=y, id=id)
+def create_seat(db: Session, seat: schemas.SeatCreate):
+    db_seat = models.Seat(**seat.model_dump())
 
     db.add(db_seat)
     db.commit()
@@ -129,4 +129,29 @@ def get_num_seats(db: Session):
     return db.scalar(
         select(func.count())
         .select_from(models.Seat)
+    )
+
+def get_seats_in_plan(db: Session, pid: int):
+    return db.scalars(
+        select(models.Seat).where(models.Seat.plan_id == pid)
+    ).all()
+
+def create_plan(db: Session, plan: schemas.PlanCreate):
+    db_plan = models.Plan(
+        **plan.model_dump(exclude=["path"]), path=str(plan.path)
+    )
+
+    db.add(db_plan)
+    db.commit()
+    db.refresh(db_plan)
+    return db_plan
+
+def get_plan(db: Session, pid: int):
+    return db.scalars(
+        select(models.Plan).where(models.Plan.id == pid)
+    ).first()
+
+def get_plan_path(db: Session, pid: int):
+    return db.scalar(
+        select(models.Plan.path).where(models.Plan.id == pid)
     )

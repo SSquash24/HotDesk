@@ -11,17 +11,9 @@ from fastapi.security import OAuth2PasswordRequestForm
 from jose import jwt
 
 # local imports
-from app import crud, models, schemas, config
+from app import crud, schemas, config
 from app.dependencies import get_db
-from app.routers import users, seats, bookings, admin
-from app.database import engine
-
-
-
-models.Base.metadata.create_all(bind=engine)
-
-
-
+from app.routers import users, seats, bookings, plans, admin
 
 
 app = FastAPI()
@@ -44,11 +36,8 @@ app.add_middleware(
 app.include_router(users.router)
 app.include_router(seats.router)
 app.include_router(bookings.router)
+app.include_router(plans.router)
 app.include_router(admin.router)
-
-
-
-
 
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None):
@@ -69,8 +58,6 @@ def authenticate_user(db, username: str, password: str):
     # if not (password + "insert hashing here" == user.hashed_password):
     #     return False
     return user
-
-
 
 @app.post("/login")
 async def login_for_access_token(
