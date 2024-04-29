@@ -10,9 +10,15 @@ Mostly adapted from the [FastAPI SQL](https://fastapi.tiangolo.com/tutorial/sql-
 2. Install [Poetry](https://python-poetry.org/docs/) using the version of python you just installed (make sure `pipx` is installed with the correct version)
 3. Run `poetry install` in the root directory
 4. Run `poetry shell` to activate the virtual environment
-5. Run `uvicorn app.main:app --reload` in the virtual environment to start the app
-6. You should see that `Uvicorn running on http://127.0.0.1:8000`. Go to [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) to be able to send requests to the server directly from the browser.
-7. You can simulate logging in by clicking the green "Authorize" button at the top right. Note that the password needs to be non-empty (although we are not validating it for now)
+5. Run `python -m scripts.init_db` to initialise the database with just the admin user.
+6. Run `uvicorn app.main:app` in the virtual environment to start the app
+7. You should see that `Uvicorn running on http://127.0.0.1:8000`. Go to [http://127.0.0.1:8000/docs](http://127.0.0.1:8000/docs) to be able to send requests to the server directly from the browser.
+8. You can simulate logging in by clicking the green "Authorize" button at the top right. Note that the password needs to be non-empty (although we are not validating it for now)
+
+## Scripts
+
+- `python -m scripts.init_db` to initialise the database with just the admin user.
+
 
 ## General Tips for Poetry
 
