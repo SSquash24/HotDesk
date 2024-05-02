@@ -7,7 +7,9 @@ from sqlalchemy.pool import StaticPool
 from app import models, crud
 from app.main import app, get_db
 from app.routers.admin import ADMIN_USER_SCHEMA
-from app.schemas import SeatCreate
+from app.schemas import SeatCreate, PlanCreate
+
+from pydantic import FilePath
 
 from datetime import date, timedelta
 
@@ -26,11 +28,13 @@ models.Base.metadata.create_all(bind=engine)
         
 db = TestingSessionLocal()        
 crud.create_user(db, ADMIN_USER_SCHEMA)
+
+db_plan = crud.create_plan(db, PlanCreate(name="testplan", path=FilePath("tests/testlayout.csv")))
 crud.create_seat(db, SeatCreate(
     name= "seat 0",
     x=0.0,
     y=0.0,
-    plan_id=0
+    plan_id=db_plan.id
 ))
 db.close()
 
