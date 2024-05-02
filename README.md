@@ -20,6 +20,9 @@ Mostly adapted from the [FastAPI SQL](https://fastapi.tiangolo.com/tutorial/sql-
 - `python -m scripts.workspace` to add a seating plan to the database
 - `python -m scripts.init_db` to initialise the database with just the admin user.
 
+## Testing
+
+- `python -m pytest` to run all tests
 
 ## General Tips for Poetry
 

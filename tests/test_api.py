@@ -119,9 +119,54 @@ def test_user_password():
     assert response.status_code == 200
 
 
+# ADMIN CALLS -----------------------------------------------------------
+
+def test_admin_user_create():
+    token = test_login()
+    response = client.post("/admin/users/create", headers={"Authorization": token}, json={
+        "username": "Joe",
+        "department": "Testing",
+        "role": "basic",
+        "password": "smith"
+    })
+    assert response.status_code == 200
+    json = response.json()
+    assert json['username'] == "Joe"
+    assert json['department'] == "Testing"
+    assert json['role'] == "basic"
+
+
+def test_login_basic():
+    form_data = {
+        "username": "Joe",
+        "password": "smith"
+    }
+
+    response = client.post("/login", data=form_data, headers = {
+        'Content-Type': 'application/x-www-form-urlencoded'
+    })
+    assert response.status_code == 200
+    return "bearer " + response.json()['access_token']
+
+
+def test_basic_user_create_fail():
+    token = test_login_basic()
+    response = client.post("/admin/users/create", headers={"Authorization": token}, json={
+        "username": "Don't",
+        "department": "Accept",
+        "role": "basic",
+        "password": "This"
+    })
+    assert response.status_code == 401
+    assert response.json() == {
+        "detail": "Could not validate credentials"
+    }
+
+
 # BOOKINGS CALLS ------------------------------------------------------------
 
 tomorrow = str(date.today() + timedelta(1))
+today = str(date.today())
 
 
 def test_bookings_book_bad_token():
@@ -141,6 +186,27 @@ def test_bookings_book():
     assert response.status_code == 200
     assert response.json()['date'] == tomorrow
 
+def test_bookings_book_repeat():
+    token = test_login()
+    response = client.post("/bookings/book/", headers={"Authorization": token}, json={
+        "date": tomorrow
+    })
+    assert response.status_code == 400
+    assert response.json() == {
+        "detail": "Booking already exists"
+    }
+
+def test_bookings_book_filled():
+    token = test_login_basic()
+    response = client.post("/bookings/book/", headers={"Authorization": token}, json={
+        "date": tomorrow
+    })
+    assert response.status_code == 400
+    assert response.json() == {
+        "detail": "Booking full"
+    }
+
+
 
 def test_bookings_count_bad_token():
     response = client.get(f"/bookings/count?date={tomorrow}", headers={"Authorization": "a bad one!"})
@@ -149,8 +215,18 @@ def test_bookings_count_bad_token():
         "detail": "Not authenticated"
     }
 
-def test_bookings_count():
-    pass # TODO
+def test_bookings_count_0():
+    token = test_login()
+    response = client.get(f"/bookings/count?date={today}", headers={"Authorization": token})
+    assert response.status_code == 200
+    assert response.json() == 0
+
+def test_bookings_count_1():
+    token = test_login()
+    response = client.get(f"/bookings/count?date={tomorrow}", headers={"Authorization": token})
+    assert response.status_code == 200
+    assert response.json() == 1
+
 
 
 def test_bookings_vacancies_bad_token():
@@ -160,11 +236,19 @@ def test_bookings_vacancies_bad_token():
         "detail": "Not authenticated"
     }
 
-def test_bookings_vacancies():
+def test_bookings_vacancies_0():
     token = test_login()
     response = client.get(f"/bookings/vacancies?date={tomorrow}", headers={"Authorization": token})
     assert response.status_code == 200
     assert response.json() == 0
+
+def test_bookings_vacancies_1():
+    token = test_login()
+    response = client.get(f"/bookings/vacancies?date={today}", headers={"Authorization": token})
+    assert response.status_code == 200
+    assert response.json() == 1
+
+
 
 def test_bookings_me_bad_token():
     response = client.get("/bookings/me", headers={"Authorization": "a bad one!"})
@@ -173,8 +257,20 @@ def test_bookings_me_bad_token():
         "detail": "Not authenticated"
     }
 
-def test_bookings_me():
-    pass # TODO
+def test_bookings_me_booked():
+    token = test_login()
+    response = client.get("/bookings/me", headers={"Authorization": token})
+    assert response.status_code == 200
+    json = response.json()
+    assert len(json) == 1
+    assert json[0]['date'] == tomorrow
+
+def test_bookings_me_empty():
+    token = test_login_basic()
+    response = client.get("/bookings/me", headers={"Authorization": token})
+    assert response.status_code == 200
+    assert response.json() == []
+
 
 
 def test_bookings_date_bad_token():
@@ -184,26 +280,19 @@ def test_bookings_date_bad_token():
         "detail": "Not authenticated"
     }
 
-def test_bookings_date():
-    pass # TODO
-
-
-
-
-# ADMIN CALLS -----------------------------------------------------------
-
-def test_admin_user_create():
+def test_bookings_date_empty():
     token = test_login()
-    response = client.post("/admin/users/create", headers={"Authorization": token}, json={
-        "username": "Joef",
-        "department": "Testing",
-        "role": "basic",
-        "password": "smith"
-    })
+    response = client.get(f"/bookings/date?date={today}", headers={"Authorization": token})
+    assert response.status_code == 200
+    assert response.json() == []
+
+def test_bookings_date_full():
+    token = test_login()
+    response = client.get(f"/bookings/date?date={tomorrow}", headers={"Authorization": token})
     assert response.status_code == 200
     json = response.json()
-    assert json['username'] == "Joef"
-    assert json['department'] == "Testing"
-    assert json['role'] == "basic"
+    assert len(json) == 1
+    assert json[0]['date'] == tomorrow
 
-# Base.metadata.drop_all(bind=engine)
+
+
