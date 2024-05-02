@@ -4,17 +4,16 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.pool import StaticPool
 
-# from ..app.database import Base
 from app import models, crud
 from app.main import app, get_db
 from app.routers.admin import ADMIN_USER_SCHEMA
-from app.dependencies import ContextManager
+from app.schemas import SeatCreate
 
 from datetime import date, timedelta
 
 # create testing db and client ---------------------------
 
-SQLALCHEMY_DATABASE_URL = "sqlite://"
+SQLALCHEMY_DATABASE_URL = "sqlite:///"
 
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL,
@@ -23,6 +22,17 @@ engine = create_engine(
 )
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 models.Base.metadata.create_all(bind=engine)
+
+        
+db = TestingSessionLocal()        
+crud.create_user(db, ADMIN_USER_SCHEMA)
+crud.create_seat(db, SeatCreate(
+    name= "seat 0",
+    x=0.0,
+    y=0.0,
+    plan_id=0
+))
+db.close()
 
 def override_get_db():
     try:
@@ -36,11 +46,9 @@ def override_get_db():
 app.dependency_overrides[get_db] = override_get_db
 
 
-
 client = TestClient(app)
 
-with ContextManager() as db:
-    crud.create_user(db, ADMIN_USER_SCHEMA)
+
 
 # Login -------------------------------------------------------------
 
@@ -123,12 +131,36 @@ def test_bookings_book_bad_token():
 
 def test_bookings_book():
     token = test_login()
-    response = client.get("/bookings/book/", headers={"Authorization": token}, json={
+    response = client.post("/bookings/book/", headers={"Authorization": token}, json={
         "date": tomorrow
     })
     assert response.status_code == 200
     assert response.json()['date'] == tomorrow
 
+
+def test_bookings_count_bad_token():
+    response = client.get(f"/bookings/count?date={tomorrow}", headers={"Authorization": "a bad one!"})
+    assert response.status_code == 401
+    assert response.json() == {
+        "detail": "Not authenticated"
+    }
+
+def test_bookings_count():
+    pass # TODO
+
+
+def test_bookings_vacancies_bad_token():
+    response = client.get(f"/bookings/vacancies?date={tomorrow}", headers={"Authorization": "a bad one!"})
+    assert response.status_code == 401
+    assert response.json() == {
+        "detail": "Not authenticated"
+    }
+
+def test_bookings_vacancies():
+    token = test_login()
+    response = client.get(f"/bookings/vacancies?date={tomorrow}", headers={"Authorization": token})
+    assert response.status_code == 200
+    assert response.json() == 0
 
 def test_bookings_me_bad_token():
     response = client.get("/bookings/me", headers={"Authorization": "a bad one!"})
