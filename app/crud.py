@@ -71,6 +71,7 @@ def get_bookings_by_user_on_date(db: Session, uid: int, d: date):
         .where(models.Booking.date == d)
     ).first()
 
+
 def get_todays_booking(db: Session, uid: int):
     return db.scalars(
         select(models.Booking)
@@ -125,10 +126,11 @@ def get_seat(db: Session, sid: int):
         select(models.Seat).where(models.Seat.id == sid)
     ).first()
 
-def get_num_seats(db: Session):
+def get_num_seats_in_plan(db: Session, pid: int):
     return db.scalar(
         select(func.count())
         .select_from(models.Seat)
+        .where(models.Seat.plan_id == pid)
     )
 
 def get_seats_in_plan(db: Session, pid: int):

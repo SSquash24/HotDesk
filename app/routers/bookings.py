@@ -5,8 +5,7 @@ from fastapi import (
     APIRouter, Depends, HTTPException, status
 )
 
-from app import crud, schemas
-
+from app import crud, schemas, config
 from app.dependencies import (
     get_current_user, verify_token, get_db
 )
@@ -51,7 +50,8 @@ def read_todays_booking(
          response_model=int, 
          dependencies=[Depends(verify_token)])
 def read_num_vacancies_on_date(date: date, db = Depends(get_db)):
-    return crud.get_num_seats(db) - crud.get_num_bookings_on_date(db, date)
+    return (crud.get_num_seats_in_plan(db, config.CURR_PLAN) 
+            - crud.get_num_bookings_on_date(db, date))
 
 @router.post("/book", response_model=schemas.Booking)
 async def book(
@@ -66,7 +66,7 @@ async def book(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Booking already exists"
         )
-    if (crud.get_num_seats(db) - 
+    if (crud.get_num_seats_in_plan(db, config.CURR_PLAN) - 
         crud.get_num_bookings_on_date(db, booking.date) <= 0):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
