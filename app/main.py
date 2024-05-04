@@ -12,7 +12,7 @@ from jose import jwt
 
 # local imports
 from app import crud, schemas, config
-from app.dependencies import get_db
+from app.dependencies import get_db, verify_password
 from app.routers import users, seats, bookings, plans, admin
 
 
@@ -54,9 +54,8 @@ def authenticate_user(db, username: str, password: str):
     user = crud.get_user_by_username(db, username)
     if not user:
         return False
-    # fix hashing at some point
-    # if not (password + "insert hashing here" == user.hashed_password):
-    #     return False
+    if (not verify_password(password, user.hashed_password)):
+        return False
     return user
 
 @app.post("/login")

@@ -8,6 +8,7 @@ from sqlalchemy import delete, select, func
 from sqlalchemy.orm import Session
 
 from app import models, schemas
+from app.dependencies import get_password_hash
 
 
 def get_user(db: Session, uid: int):
@@ -29,7 +30,7 @@ def get_user_by_username(db: Session, username: str):
 
 
 def create_user(db: Session, user: schemas.UserCreate):
-    hashed_password = user.password + "insert hashing here"
+    hashed_password = get_password_hash(user.password)
     db_user = models.User(
         **user.model_dump(exclude={'password'}),
         hashed_password=hashed_password
@@ -40,7 +41,7 @@ def create_user(db: Session, user: schemas.UserCreate):
     return db_user
 
 def update_password(db: Session, uid: int, password: str):
-    hashed_password = password + "insert hashing here"
+    hashed_password = get_password_hash(password)
     user = get_user(db, uid)
     user.hashed_password = hashed_password
     db.commit()
