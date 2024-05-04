@@ -20,6 +20,20 @@ CREDENTIALS_EXCEPTION = HTTPException(
     headers={"WWW-Authenticate": "Bearer"},
 )
 
+ADMIN_USER_SCHEMA = schemas.UserCreate(
+    username="Admin",
+    department=None,
+    role="admin",
+    password="password"
+)
+
+DUMMY_USER_SCHEMA = schemas.UserCreate(
+    username="Dummy",
+    department=None,
+    role="user",
+    password="dummypassword"
+)
+
 class ContextManager:
     def __init__(self):
         self.db = SessionLocal()

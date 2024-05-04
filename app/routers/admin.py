@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 from app import crud, models, schemas
 from app.dummy import dummy_db
 from app.dependencies import (
-   verify_admin,  get_db
+   ADMIN_USER_SCHEMA, verify_admin,  get_db
 )
 
 router = APIRouter(
@@ -18,12 +18,7 @@ router = APIRouter(
     dependencies=[Depends(verify_admin)]
 )
 
-ADMIN_USER_SCHEMA = schemas.UserCreate(
-    username="Admin",
-    department=None,
-    role="admin",
-    password="password"
-)
+
 
 # testing purposes --- initializes some users into the database if it is empty
 def create_dummy(db):
