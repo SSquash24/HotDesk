@@ -8,15 +8,19 @@ def startpoint(points, left=np.array([-1,1]), right=np.array([1,-1])):
     d = np.abs(np.cross(a, b)/np.linalg.norm(a))
     index = np.argmax(d)
     out = points[index]
+
     points = np.delete(points, index, axis=0)
-    return out, points
+    return out, points, index
 
 #Outputs k points that are chosen to be as far from each other as possible
 #Output as a list of those points and the remaining points that weren't chosen
-def incremental_farthest_search(points, k):
+def incremental_farthest_search(points, k, ids):
     assert(points.shape[0]>=k)
     remaining_points = points[:]
-    one, remaining_points = startpoint(remaining_points)
+    remaining_ids = ids
+    one, remaining_points, index = startpoint(remaining_points)
+    solution_ids = [remaining_ids[index]]
+    remaining_ids.pop(index)
     solution_set = [one]
     #Each iteration of for loop picks one point
     for _ in range(k-1):
@@ -26,15 +30,18 @@ def incremental_farthest_search(points, k):
                 distances[i] = min(distances[i], distance(p, s))
         inx = distances.index(max(distances))
         solution_set.append(remaining_points[inx])
+        solution_ids.append(remaining_ids[inx])
         remaining_points = np.delete(remaining_points, inx, axis=0)
-    return solution_set, remaining_points
+        remaining_ids.pop(inx)
+    return solution_set, solution_ids, remaining_points, remaining_ids
 
 #Distance between two points
 def distance(A, B):
     return np.linalg.norm(A-B)
 
-def assign_seats(starters, points, numbers):
+def assign_seats(starters, starter_ids, points, ids, numbers):
     remaining_points = points
+    remaining_ids = ids
     number_of_sets = len(numbers)
     number_of_points = sum(numbers)
     sorted_capacities = sorted(numbers, reverse=True)
@@ -43,6 +50,7 @@ def assign_seats(starters, points, numbers):
     available_sets = [i for i in range(number_of_sets)]
     remaining_below = [number_of_sets for _ in range(number_of_sets)]
     final_set = np.zeros((number_of_points, 3))
+    final_ids = starter_ids
 
     for i in range(number_of_sets):
         final_set[i] = [starters[i][0], starters[i][1], i]
@@ -68,6 +76,7 @@ def assign_seats(starters, points, numbers):
                     infopoint = i
                     infoset = s
         final_set[slot] = [remaining_points[infopoint][0], remaining_points[infopoint][1], infoset]
+        final_ids.append(remaining_ids[infopoint])
         remaining_points = np.delete(remaining_points, infopoint, axis=0)
         number_sofar[infoset] = number_sofar[infoset] + 1
         for k in range(number_of_sets):
@@ -78,7 +87,7 @@ def assign_seats(starters, points, numbers):
                         if number_sofar[l] <= sorted_capacities[k] and max_capacities[l] >= sorted_capacities[k]:
                             max_capacities[l] = sorted_capacities[k]
         slot += 1
-    return final_set
+    return final_set, final_ids
     
 #Basic algorithm assigning seats to groups based off of their x coordinate (left to right)
 def simple_assign(numbers, points):
@@ -90,10 +99,22 @@ def simple_assign(numbers, points):
     points = np.concatenate((points, assignments.T), axis=1)
     return points
 
-#Inputs a list of group sizes and seats in 2d space (numpy array)
+#Inputs a list of group sizes and seats
 #Outputs a list of seats with a number attached corresponding to the group 
-def main(capacities, point_list):
-    starters, remaining_points = incremental_farthest_search(point_list, len(capacities))
-    seated = assign_seats(starters, remaining_points, capacities)
-    print(seated)
-    return seated.tolist()
+def main(capacities, seat_list):
+    point_list, id_list = convert_from_seats(seat_list)
+    starters, starter_ids, remaining_points, remaining_ids = incremental_farthest_search(point_list, len(capacities), id_list)
+    seated, final_ids = assign_seats(starters, starter_ids, remaining_points, remaining_ids, capacities)
+    output = []
+    for i in range(sum(capacities)):
+        output.append([seated[i][2], final_ids[i]])
+    return output
+
+def convert_from_seats(list_of_seats):
+    point_list = []
+    id_list = []
+    for item in list_of_seats:
+        point_list.append([item.x, item.y])
+        id_list.append(item.id)
+    return(np.array(point_list), id_list)
+    
