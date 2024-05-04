@@ -1,11 +1,12 @@
 from typing import Annotated
 
+import bcrypt
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
+from jose import JWTError, jwt
 
 from app import crud, schemas, config
 from app.database import SessionLocal
-from jose import JWTError, jwt
 
 
 
@@ -13,11 +14,24 @@ from jose import JWTError, jwt
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login")
 
 
-
 CREDENTIALS_EXCEPTION = HTTPException(
     status_code=status.HTTP_401_UNAUTHORIZED,
     detail="Could not validate credentials",
     headers={"WWW-Authenticate": "Bearer"},
+)
+
+ADMIN_USER_SCHEMA = schemas.UserCreate(
+    username="Admin",
+    department=None,
+    role="admin",
+    password="password"
+)
+
+DUMMY_USER_SCHEMA = schemas.UserCreate(
+    username="Dummy",
+    department=None,
+    role="user",
+    password="dummypassword"
 )
 
 class ContextManager:
@@ -59,3 +73,18 @@ def get_current_user(
 def verify_admin(token_data: Annotated[str, Depends(verify_token)]):
     if(token_data.role != "admin"):
         raise CREDENTIALS_EXCEPTION
+    
+# https://github.com/pyca/bcrypt/issues/684
+# Hash a password using bcrypt
+def get_password_hash(password):
+    pwd_bytes = password.encode('utf-8')
+    salt = bcrypt.gensalt()
+    hashed_password = bcrypt.hashpw(password=pwd_bytes, salt=salt)
+    return hashed_password.decode('utf-8')
+
+# Check if the provided password matches the stored password (hashed)
+def verify_password(plain_password, hashed_password):
+    password_byte_enc = plain_password.encode('utf-8')
+    hash_bytes = hashed_password.encode('utf-8')
+    return bcrypt.checkpw(password = password_byte_enc, 
+                          hashed_password = hash_bytes)

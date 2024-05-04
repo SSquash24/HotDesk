@@ -1,4 +1,5 @@
 import numpy as np
+from scipy.spatial.distance import euclidean
 
 #Picks farthest point from center of point set
 #Outputs a single point and the remaining points that weren't chosen
@@ -36,8 +37,7 @@ def incremental_farthest_search(points, k, ids):
     return solution_set, solution_ids, remaining_points, remaining_ids
 
 #Distance between two points
-def distance(A, B):
-    return np.linalg.norm(A-B)
+distance = euclidean
 
 def assign_seats(starters, starter_ids, points, ids, numbers):
     remaining_points = points
