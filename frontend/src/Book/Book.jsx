@@ -7,7 +7,7 @@ import './book.css'
 
 function Book() {
 
-    const [date, setDate] = useState(new Date());
+    const [date, setDate] = useState(global.config.today);
     const [seats, setSeats] = useState('-')
     const [doInit, setInit] = useState(true)
     const { token } = useContext(TokenContext)
@@ -16,7 +16,7 @@ function Book() {
     function getVacancies(day) {
         let lcldate = new Date(day.year, day.month, day.number)
         lcldate.setDate(lcldate.getDate() + 1)
-        if (day.isBooked || lcldate <= new Date()) {
+        if (day.isBooked || lcldate <= global.config.today) {
             setSeats('-')
         } else {
             fetch(global.config.api_vacancies + "?date="

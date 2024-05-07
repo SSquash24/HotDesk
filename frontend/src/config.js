@@ -13,6 +13,9 @@ module.exports = global.config = {
     //POSTS
     api_login: path + "login",
     api_changePassword: path + "users/password",
-    api_book: path + "bookings/book"
+    api_book: path + "bookings/book",
+
+
+    today: new Date()
 
 };

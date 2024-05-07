@@ -30,14 +30,14 @@ describe('BookPage', () => {
 
     test('page has expected components', () => {
         expect(screen.getByText('Booking Page:')).toBeInTheDocument() // title
-        expect(screen.getByText(new Date().getFullYear())).toBeInTheDocument() // calendar
+        expect(screen.getByText(global.config.today.getFullYear())).toBeInTheDocument() // calendar
         expect(screen.getByText('Book')).toBeInTheDocument() // book button
         expect(screen.getByText('Seats available: -')).toBeInTheDocument()
 
     })
 
     test('shown date changes when calendar is clicked', async () => {
-        let today = new Date();
+        let today = global.config.today;
         let testDate = '15'
         if (testDate === today.getDate()) testDate = '16'
         const toClick = screen.getByText(testDate);
@@ -49,7 +49,7 @@ describe('BookPage', () => {
     })
 
     test('book button sends valid fetch request', async () => {
-        const date = new Date();
+        const date = global.config.today;
         const bookButton = screen.getByTestId('book-button');
 
         await waitFor(() => {

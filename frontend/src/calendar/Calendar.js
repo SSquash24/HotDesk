@@ -12,8 +12,8 @@ function Calendar(props) {
 
     const { token } = useContext(TokenContext)
 
-    const [currentDay, setCurrentDay] = useState(new Date())
-    const [selectedDay, setSelectedDay] = useState(new Date())
+    const [currentDay, setCurrentDay] = useState(global.config.today)
+    const [selectedDay, setSelectedDay] = useState(global.config.today)
     const [booked, setBooked] = useState({
         value: [],
         fetch: true

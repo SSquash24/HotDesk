@@ -53,7 +53,7 @@ function UserInfo(props) {
 
 function Bookings() {
 
-    const [date, setDate] = useState(new Date())
+    const [date, setDate] = useState(global.config.today)
 
     const handleCalendarClick = (day) => {
         setDate(new Date(day.year, day.month, day.number))

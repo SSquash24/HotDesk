@@ -3,7 +3,6 @@ function CalendarDays(props) {
     let firstDayOfMonth = new Date(props.day.getFullYear(), props.day.getMonth(), 1);
     let weekdayOfFirstDay = firstDayOfMonth.getDay();
     let currentDays = [];
-    let today = new Date();
 
 
     let bookedDays = [...props.booked]
@@ -24,7 +23,7 @@ function CalendarDays(props) {
             month: firstDayOfMonth.getMonth(),
             number: firstDayOfMonth.getDate(),
             selected: (firstDayOfMonth.toDateString() === props.selected.toDateString()),
-            isToday: (firstDayOfMonth.toDateString() === today.toDateString()),
+            isToday: (firstDayOfMonth.toDateString() === global.config.today.toDateString()),
             isBooked: (bookedDays.length > 0 && firstDayOfMonth.toDateString() === bookedDays[0].toDateString()),
             year: firstDayOfMonth.getFullYear()
         }
