@@ -54,6 +54,20 @@ async def reset(db = Depends(get_db)):
     return "Database reset to empty state"
 
 
+@router.get(
+    "/users/{user_id}", 
+    response_model=schemas.User, 
+    tags=["users"]
+)
+def read_user(
+    user_id: Annotated[int, Path(title="ID of user")], 
+    db: Session = Depends(get_db)):
+    db_user = crud.get_user(db, user_id)
+    if (not db_user):
+        raise HTTPException(status_code=400, 
+                            detail="User with ID does not exist")
+    return db_user
+
 @router.post(
     "/users/create", 
     response_model=schemas.User, 
