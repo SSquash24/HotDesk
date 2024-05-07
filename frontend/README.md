@@ -1,66 +1,34 @@
-## Available Scripts
+# Hot Desking Frontend
 
-In the project directory, you can run:
+The frontend now communicates with the api, so if you are running it, you will not be able to get past the login screen unless you also run the api (currently in the backend branch)
 
-### `npm start`
+## Setup
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+1. Install [npm](https://www.npmjs.com/package/npm) - I'm using version 10.2.4
+2. In the frontend folder, run `npm install`
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+> [!NOTE]
+> If npm lists security vulnerabilities, thats currently expected (the vulnerabilities should dissapear in the production server)
 
-### `npm test`
+## Starting the frontend
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+  Start the server in development mode with `npm start` in the frontend folder
 
-### `npm run build`
+## Testing
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+1. To run all current tests run `npm test` in the frontend folder. They should currently all pass
+2. To add new tests, write them in a new or existing _.test.js file.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+> [!NOTE]
+> When running tests, you may get a warning about updates not being wrapped in an act(...).
+> This comes from setting up mock responses to the api calls, and I have not been able to remove them.
+> The tests still all run correctly.
+> To hide these warnings, you can run `npm test -- --silent` instead
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Deployment
 
-### `npm run eject`
+1. Create a production build with `npm run build` (in the frontend folder).
+2. Run this build with `serve -s build`
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+> [!IMPORTANT]
+> By default, the server's api path is set to `localhost:8000`, so only the device that is running the server can see the frontend correctly. You may wish to fix this by setting `path` to the server's ip address in config.js.
