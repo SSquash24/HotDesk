@@ -50,8 +50,31 @@ function Desk() {
         })
     }
 
+        
+    const [colleages, setColleaeges] = useState(null)
+
+    if (colleages == null) {
+        fetch(global.config.api_colleages + "?d="
+            + String(global.config.today.getFullYear()).padStart(4, '0')
+            + '-' + String(global.config.today.getMonth() + 1).padStart(2, '0')
+            + '-' + String(global.config.today.getDate()).padStart(2, '0')
+        , {
+            method: "GET",
+            headers: {
+                "Authorization": token
+            }
+        }).then(async (response) => {
+            if (response.ok) {
+                setColleaeges(await response.json())
+            }
+            else setColleaeges("Error1")
+        }).catch(e => {
+            setColleaeges("Error2")
+        })
+    }
+
     useEffect(() => {
-        if (url !== "") {
+        if (url !== "" && seat != null && colleages != null) {
             var c = document.getElementById("canvas")
             var ctx = c.getContext("2d")
             var image = new Image();
@@ -59,21 +82,40 @@ function Desk() {
                 c.width = image.width; c.height = image.height
                 ctx.drawImage(image, 0, 0)
 
-                //draw desk spot
-                if (seat !== null && seat !== "Error") {
-                    ctx.fillStyle = '#ff0000'
-                    ctx.beginPath();
-                    ctx.arc(seat.x, seat.y, 10, 0, 2 * Math.PI, true)
+                //draw colleages spot
+                ctx.beginPath();
+                if (colleages !== null && typeof(colleages) !== String) {
+                    ctx.fillStyle = '#0000cc'
+
+
+
+                    for (var spot of colleages) {
+                        ctx.moveTo(spot.x + 6, spot.y)
+                        ctx.arc(spot.x, spot.y, 6, 0, 2 * Math.PI, true)
+
+                    }
                     ctx.fill()
                     ctx.stroke()
                 }
+
+                //draw desk spot
+                if (seat !== null && typeof(seat) !== String) {
+                    ctx.fillStyle = '#ff0000'
+                    ctx.beginPath()
+                    ctx.arc(seat.x, seat.y, 10, 0, 2 * Math.PI, true)
+                    ctx.closePath()
+                    ctx.fill()
+                    ctx.stroke()
+
+                }
+                
             }
             image.src = url
 
             
         }
     })
-        
+
 
     return (
         <div>
