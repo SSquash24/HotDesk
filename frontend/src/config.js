@@ -9,6 +9,9 @@ module.exports = global.config = {
     api_todaysBook: path + "bookings/today",
     api_vacancies: path + "bookings/vacancies",
     api_createUser: path + "admin/users/create",
+    api_img: path + "plans/1/image",
+    api_seat: path + "seats/me",
+
 
     //POSTS
     api_login: path + "login",

@@ -2,6 +2,7 @@ import Home from '../Home/Home';
 import Book from '../Book/Book'
 import Account from '../Account/Account'
 import Login from '../Login/Login'
+import Desk from '../Desk/Desk'
 import './navigator.css'
 
 
@@ -98,6 +99,7 @@ function Navigator(props) {
     } else {
         pages = <>
             <Route exact path="/" element={<Home uInfo={state.uInfo} />} />
+            <Route exact path="/desk" element={<Desk />} />
             <Route exact path="/book" element={<Book />} />
             <Route exact path="/account" element={<Account />} />
             {state.uInfo.role === "admin" && <Route exact path="/admin" element={<Admin />} />}
@@ -110,6 +112,7 @@ function Navigator(props) {
 
             {state.validated && <nav className='navbar'>
                 <NavLink to='/'>Home</NavLink>
+                <NavLink to='/desk'>Desk</NavLink>
                 <NavLink to='/book'>Book</NavLink>
                 {state.uInfo.role === "admin" && <NavLink to='/admin'>Admin</NavLink>}
                 <NavLink to='/account'>Account</NavLink>
