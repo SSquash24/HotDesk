@@ -91,16 +91,6 @@ def k_furthest_points(starters, starter_ids, points, ids, numbers):
         slot += 1
     return final_set, final_ids
     
-#Basic algorithm assigning seats to groups based off of their x coordinate (left to right)
-def simple_assign(numbers, points):
-    assignments = []
-    for i in range(len(numbers)):
-        assignments.extend([i for _ in range(numbers[i])])
-    assignments = np.array([assignments])
-    points = points[points[:, 0].argsort()]
-    points = np.concatenate((points, assignments.T), axis=1)
-    return points
-
 # Inputs a list of group sizes and seats
 # Outputs a list of seats with a number attached corresponding to the group 
 # (List of pairs (d, sid) where d is the department and sid is the seat_id)
