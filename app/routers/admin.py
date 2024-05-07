@@ -1,4 +1,5 @@
 
+from datetime import date
 from typing import Annotated
 
 from fastapi import (
@@ -7,6 +8,8 @@ from fastapi import (
 from sqlalchemy.orm import Session
 
 from app import crud, models, schemas
+from app.algo.util import evaluate_assignment, metrics
+from app.config import ALGO_METRIC
 from app.dummy import dummy_db
 from app.dependencies import (
    ADMIN_USER_SCHEMA, verify_admin,  get_db
@@ -86,7 +89,7 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     "/bookings/assign/{booking_id}", 
     tags=["bookings"]
 )
-async def assign(
+async def assign_single(
     booking_id: Annotated[int, Path(title="ID of booking")], 
     seat_id: int, 
     db = Depends(get_db)
@@ -99,3 +102,24 @@ async def assign(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Booking not found"
         )
+
+@router.post(
+    "/bookings/assign", 
+    tags=["bookings"]
+)
+async def assign_seats_on_date(
+    d: date,
+    db = Depends(get_db)
+):
+    crud.update_bookings_on_date(db, d)
+    return 
+
+@router.get(
+    "/bookings/score", 
+    tags=["bookings"]
+)
+async def calculate_score_for_date(
+    d: date, 
+    db = Depends(get_db)
+):
+    return crud.get_booking_score(db, d)

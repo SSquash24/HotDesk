@@ -1,7 +1,6 @@
 import numpy as np
-from scipy.spatial.distance import euclidean
 
-from app.algo.util import metrics
+import app.algo.util as util
 from app.config import ALGO_METRIC
 
 #Picks farthest point from center of point set
@@ -40,7 +39,7 @@ def incremental_farthest_search(points, k, ids):
     return solution_set, solution_ids, remaining_points, remaining_ids
 
 #Distance between two points
-metric = metrics[ALGO_METRIC]
+metric = util.metrics[ALGO_METRIC]
 
 def k_furthest_points(starters, starter_ids, points, ids, numbers):
     remaining_points = points
@@ -111,7 +110,7 @@ def assign_seats(capacities, seat_list):
     seated, final_ids = k_furthest_points(starters, starter_ids, remaining_points, remaining_ids, capacities)
     output = []
     for i in range(sum(capacities)):
-        output.append([seated[i][2], final_ids[i]])
+        output.append([int(seated[i][2]), final_ids[i]])
     return output
 
 def convert_from_seats(list_of_seats):

@@ -1,4 +1,4 @@
-example-floorplan,workspaces\example-floorplan.jpg
+example-floorplan,workspaces/example-floorplan.jpg
 0x1.04a94a5294a53p+8,0x1.9e6d01a6d01a6p+7
 0x1.0a98c6318c632p+8,0x1.1378915789158p+8
 0x1.4d5ef7bdef7bep+8,0x1.1378915789158p+8

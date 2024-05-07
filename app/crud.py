@@ -2,12 +2,16 @@
 # not sure if we need a separate dummy version for testing
 
 
+from collections import defaultdict
 from datetime import date
 
 from sqlalchemy import delete, select, func
 from sqlalchemy.orm import Session
 
 from app import models, schemas
+import app.algo.util as util
+from app.algo.default import algorithms
+from app.config import ALGO_METRIC, CURR_ALGO, CURR_PLAN
 from app.dependencies import get_password_hash
 
 
@@ -113,6 +117,29 @@ def update_booking_with_seat(db: Session, bid: int, sid: int):
     db.commit()
     db.refresh(booking)
     return booking
+
+def update_bookings_on_date(db: Session, 
+                            d: date, algorithm=algorithms[CURR_ALGO]):
+    bookings = get_bookings_on_date(db, d)
+    depts = util.group_bookings_by_department(bookings)
+    seats = get_seats_in_plan(db, CURR_PLAN)
+    capacities = [len(dept) for dept in depts.values()]
+    capacities.sort()
+    assignments = algorithm(capacities, seats)
+    groups = defaultdict(list)
+    for d, seat_id in assignments:
+        groups[d].append(get_seat(db, seat_id))
+    # print(assignments, groups)
+    # print(depts, capacities)
+    for i, dept in enumerate(sorted(depts.values(), key=lambda d: len(d))):
+        for j, booking in enumerate(dept):
+            booking.seat_id = groups[i][j].id
+    db.commit()
+    return get_booking_score(db, d)
+
+def get_booking_score(db: Session, d: date):
+    bookings = get_bookings_on_date(db, d)
+    return util.evaluate_assignment(bookings, util.metrics[ALGO_METRIC])
 
 def create_seat(db: Session, seat: schemas.SeatCreate):
     db_seat = models.Seat(**seat.model_dump())

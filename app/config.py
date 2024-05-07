@@ -14,3 +14,5 @@ SQLALCHEMY_DATABASE_URL = f"sqlite:///{DATABASE_PATH}"
 CURR_PLAN = 1
 
 RNG_SEED = 1234
+ALGO_METRIC = "euclidean"
+CURR_ALGO = "k_furthest"
