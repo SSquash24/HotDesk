@@ -49,6 +49,7 @@ class SeatBase(BaseModel):
     x: float
     y: float
     plan_id: int
+    
 class Seat(SeatBase):
     id: int
     

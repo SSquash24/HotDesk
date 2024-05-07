@@ -76,6 +76,14 @@ def get_bookings_by_user_on_date(db: Session, uid: int, d: date):
         .where(models.Booking.date == d)
     ).first()
 
+def get_bookings_by_dept_on_date(db: Session, dept: str, d: date):
+    return db.scalars(
+        select(models.Booking)
+        .join_from(models.User, models.Booking)
+        .where(models.Booking.date == d)
+        .where(models.User.department == dept)
+    ).all()
+
 
 def get_todays_booking(db: Session, uid: int):
     return db.scalars(

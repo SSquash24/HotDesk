@@ -65,7 +65,7 @@ def k_furthest_points(starters, starter_ids, points, ids, numbers):
         for l in available_sets:
             if number_sofar[l] == max_capacities[l]:
                 to_remove.append(l)
-                print(l)
+                # print(l)
         available_sets = [e for e in available_sets if e not in to_remove]
 
         distance_best = metric(remaining_points[0], starters[available_sets[0]])

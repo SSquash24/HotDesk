@@ -1,6 +1,5 @@
 # Hot Desking Backend
 
-
 Mostly adapted from the [FastAPI SQL](https://fastapi.tiangolo.com/tutorial/sql-databases/) and [Security](https://fastapi.tiangolo.com/tutorial/security/oauth2-jwt/) tutorials.
 
 ## Setup

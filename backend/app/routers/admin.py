@@ -112,7 +112,7 @@ async def assign_seats_on_date(
     db = Depends(get_db)
 ):
     crud.update_bookings_on_date(db, d)
-    return 
+    return crud.get_booking_score(db, d)
 
 @router.get(
     "/bookings/score", 
