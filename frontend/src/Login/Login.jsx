@@ -48,7 +48,7 @@ function Login(props) {
                 </div><br />
                 <div className="sideBySide">
                     <h3>Password:</h3>
-                    <input id="pwInput"></input>
+                    <input type="password" id="pwInput"></input>
                 </div><br />
                 <div className="centered">
                     <button onClick={handleButton} className="loginButton">Login</button>
