@@ -9,17 +9,20 @@ function UserInfo(props) {
     const [seat, setSeat] = useState({ value: "loading...", toGet: true })
 
     if (seat.toGet) {
-        fetch(global.config.api_todaysBook, {
+        fetch(global.config.api_seat + "?d="
+            + String(global.config.today.getFullYear()).padStart(4, '0')
+            + '-' + String(global.config.today.getMonth() + 1).padStart(2, '0')
+            + '-' + String(global.config.today.getDate()).padStart(2, '0')
+        , {
             method: "GET",
             headers: {
-                "accept": "application/json",
                 "Authorization": token
             }
         }).then(async (response) => {
             let json = await response.json()
             if (response.ok) {
                 setSeat({
-                    value: json.seat,
+                    value: json.name,
                     toGet: false
                 })
             } else {
