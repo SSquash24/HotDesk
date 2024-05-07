@@ -21,3 +21,4 @@ if __name__ == "__main__":
     with ContextManager() as db:
         algorithm = algorithms[args.algo_type]
         crud.update_bookings_on_date(db, args.date, algorithm)
+        print(f"Algorithm {args.algo_type} ran for bookings on {args.date}")
