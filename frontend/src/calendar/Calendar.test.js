@@ -20,15 +20,15 @@ describe('Calendar', () => {
     });
 
     test('tells you year', () => {
-        expect(screen.getByText(new Date().getFullYear())).toBeInTheDocument()
+        expect(screen.getByText(global.config.today.getFullYear())).toBeInTheDocument()
     })
 
     test('tells you month', () => {
-        expect(screen.getByText(new Date().toLocaleString('default', { month: 'long' }))).toBeInTheDocument();
+        expect(screen.getByText(global.config.today.toLocaleString('default', { month: 'long' }))).toBeInTheDocument();
     })
 
     test('tells you today', () => {
-        expect(screen.getByTestId('table-content').querySelector('.today')).toHaveTextContent(new Date().getDate());
+        expect(screen.getByTestId('table-content').querySelector('.today')).toHaveTextContent(global.config.today.getDate());
     })
 
 })
@@ -43,10 +43,9 @@ describe('Cal API', () => {
 
     test('sends GET request to bookings/me and shows current bookings when logged in', async () => {
         const setToken = jest.fn();
-        const today = new Date();
         const mockResponse = [
-            { date: new Date(today.getFullYear(), today.getMonth(), 14), seat: 'A1' },
-            { date: new Date(today.getFullYear(), today.getMonth(), 16), seat: 'B2' },
+            { date: new Date(global.config.today.getFullYear(), global.config.today.getMonth(), 14), seat: 'A1' },
+            { date: new Date(global.config.today.getFullYear(), global.config.today.getMonth(), 16), seat: 'B2' },
         ];
 
         fetch.mockResponseOnce(JSON.stringify(mockResponse));

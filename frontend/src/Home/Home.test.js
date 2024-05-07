@@ -31,14 +31,14 @@ describe('HomePage', () => {
         expect(uinfo.innerHTML).toMatch('Name: John Doe');
         expect(screen.getByText("Today's seat:")).toBeInTheDocument();
         expect(uinfo.innerHTML).toMatch('Team: HR');
-        expect(screen.getByText(new Date().getFullYear())).toBeInTheDocument();
-        expect(screen.getByText('Date: ' + new Date().toDateString())).toBeInTheDocument();
+        expect(screen.getByText(global.config.today.getFullYear())).toBeInTheDocument();
+        expect(screen.getByText('Date: ' + global.config.today.toDateString())).toBeInTheDocument();
     })
 
 
     test('shown date changes when calendar is clicked', async () => {
-        let today = new Date();
         let testDate = '15'
+        let today = global.config.today
         if (testDate === today.getDate()) testDate = '16'
         const toClick = screen.getByText(testDate);
         userEvent.click(toClick)
