@@ -16,22 +16,24 @@ from app.dependencies import get_db, verify_password
 from app.routers import users, seats, bookings, plans, admin
 
 
-app = FastAPI()
-
-
-origins = [
-    "http://localhost:3000",
-    "localhost:3000"
-]
-
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"]
+app = FastAPI(
+    root_path="/api"
 )
+
+
+# origins = [
+#     "http://localhost:3000",
+#     "localhost:3000"
+# ]
+
+
+# app.add_middleware(
+#     CORSMiddleware,
+#     allow_origins=origins,
+#     allow_credentials=True,
+#     allow_methods=["*"],
+#     allow_headers=["*"]
+# )
 
 app.include_router(users.router)
 app.include_router(seats.router)

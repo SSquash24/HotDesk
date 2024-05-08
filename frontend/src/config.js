@@ -1,4 +1,5 @@
-const path = "http://localhost:8000/"
+// const path = "http://localhost:8000/"
+const path = "/api/"
 
 module.exports = global.config = {
     api_path: path,
